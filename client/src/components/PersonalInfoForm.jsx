@@ -38,7 +38,7 @@ const PersonalInfoForm = ({data, onChange, removeBackground, setRemoveBackground
                 <p>Remove Background</p>
                 <label className='relative inline-flex items-center cursor-pointer text-gray-900 gap-3'>
                     <input type="checkbox" className="sr-only peer" onChange={()=>setRemoveBackground(prev => !prev)} checked={removeBackground}/>
-                    <div className='w-9 h-5 bg-slate-300 rounded-full peer peer-checked:bg-green-600 transition-colors duration-200'>
+                    <div className='w-9 h-5 bg-slate-300 rounded-full peer peer-checked:bg-[var(--textdark)] transition-colors duration-200'>
                     </div>
                     <span className='dot absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-4'></span>
                 </label>
@@ -53,9 +53,9 @@ const PersonalInfoForm = ({data, onChange, removeBackground, setRemoveBackground
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-600">
                     <Icon className="size-4"/>
                     {field.label}
-                    {field.required && <span className="text-red-500">*</span>}
+                    {field.required && <span style={{ color: 'var(--textdark)' }}>*</span>}
                 </label>
-                <input type={field.type} value={data[field.key] || ""} onChange={(e)=>handleChange(field.key, e.target.value)} className='mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-sm' placeholder={`Enter your ${field.label.toLowerCase()}`} required={field.required}/>
+                <input type={field.type} value={data[field.key] || ""} onChange={(e)=>handleChange(field.key, e.target.value)} className='mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-[var(--textlight)] focus:border-[var(--textdark)] outline-none transition-colors text-sm' placeholder={`Enter your ${field.label.toLowerCase()}`} required={field.required}/>
             </div>
         )
     })}

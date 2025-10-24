@@ -1,41 +1,41 @@
 import React from 'react'
+import logo from '../../assets/Logo.png'
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const Hero = () => {
 
+    const {user} = useSelector(state => state.auth)
+
     const [menuOpen, setMenuOpen] = React.useState(false);
 
-    const logos = [
-        'https://saasly.prebuiltui.com/assets/companies-logo/instagram.svg',
-        'https://saasly.prebuiltui.com/assets/companies-logo/framer.svg',
-        'https://saasly.prebuiltui.com/assets/companies-logo/microsoft.svg',
-        'https://saasly.prebuiltui.com/assets/companies-logo/huawei.svg',
-        'https://saasly.prebuiltui.com/assets/companies-logo/walmart.svg',
-    ]
+    
 
 return (
             <>
                     <div className="min-h-screen pb-20">
                             {/* Navbar */}
                             <nav className="z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 lg:px-24 xl:px-40 text-sm">
-                                    <a href="/">
-                                         <img src="/src/assets/Logo.png" alt="Logo" className="w-10 h-10" />
+                                                                                 <a href="/">
+                                                                                         <img src={logo} alt="logo" className="h-11 w-auto"/>
                                     </a>
 
                                     <div className="hidden md:flex items-center gap-8 transition duration-500 text-slate-800">
-                                            <a href="#" className="hover:text-[#c01219] transition">Home</a>
-                                            <a href="#features" className="hover:text-[#c01219] transition">Features</a>
-                                            <a href="#testimonials" className="hover:text-[#c01219] transition">Testimonials</a>
-                                            <a href="#cta" className="hover:text-[#c01219] transition">Contact</a>
+                                            <a href="#" className="transition hover:text-[var(--textdark)]">Home</a>
+                                            <a href="#features" className="transition hover:text-[var(--textdark)]">Features</a>
+                                            <a href="#testimonials" className="transition hover:text-[var(--textdark)]">Testimonials</a>
+                                            <a href="#cta" className="transition hover:text-[var(--textdark)]">About Us</a>
                                     </div>
 
                                     <div className="flex gap-2">
-                                            <Link to='/app?state=register' className="hidden md:block px-6 py-2 bg-[#c01219] hover:bg-[#990f13] active:scale-95 transition-all rounded-full text-white">
+                                            <Link to='/app?state=register' className="hidden md:block px-6 py-2 active:scale-95 transition-all rounded-full text-white bg-[var(--textdark)] hover:bg-[var(--textlight)]" hidden={user}>
                                                     Get started
                                             </Link>
-
-                                            <Link to='/app?state=login' className="hidden md:block px-6 py-2 border border-[#c01219] active:scale-95 hover:bg-slate-50 transition-all rounded-full text-slate-700 hover:text-[#c01219]" >
+                                            <Link to='/app?state=login' className="hidden md:block px-6 py-2 border border-[var(--textdark)] active:scale-95 transition-all rounded-full text-slate-700 hover:bg-[var(--gradientend)] hover:text-[var(--textdark)]" hidden={user}>
                                                     Login
+                                            </Link>
+                                            <Link to='/app' className='hidden md:block px-8 py-2 active:scale-95 transition-all rounded-full text-white bg-[var(--textdark)] hover:bg-[var(--textlight)]' hidden={!user}>
+                                                    Dashboard
                                             </Link>
                                     </div>
 
@@ -52,14 +52,14 @@ return (
                                     <a href="#features" className="text-white">Features</a>
                                     <a href="#testimonials" className="text-white">Testimonials</a>
                                     <a href="#contact" className="text-white">Contact</a>
-                                    <button onClick={() => setMenuOpen(false)} className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-[#c01219] hover:bg-[#990f13] transition text-white rounded-md flex" >
+                                    <button onClick={() => setMenuOpen(false)} className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center transition text-white rounded-md flex bg-[var(--textdark)] hover:bg-[var(--textlight)]" >
                                             X
                                     </button>
                             </div>
 
                             {/* Hero Section */}
                             <div className="relative flex flex-col items-center justify-center text-sm px-4 md:px-16 lg:px-24 xl:px-40 text-black">
-                                    <div className="absolute top-28 xl:top-10 -z-10 left-1/4 size-72 sm:size-96 xl:size-120 2xl:size-132 bg-[#c01219] blur-[100px] opacity-30"></div>
+                                    <div className="absolute top-28 xl:top-10 -z-10 left-1/4 size-72 sm:size-96 xl:size-120 2xl:size-132 blur-[100px] opacity-30" style={{ backgroundColor: 'var(--gradientend)' }}></div>
 
                                     {/* Avatars + Stars */}
                                                                             <div className="flex items-center mt-24">
@@ -84,28 +84,27 @@ return (
                                                                             </div>
 
                                                                             {/* Headline + CTA */}
-                                                                            <h1 className="text-5xl md:text-6xl font-semibold max-w-5xl text-center mt-4 md:leading-[70px]">
-                                                                                Build ATS-friendly, <span className="bg-gradient-to-r from-[#c01219] to-[#990f13] bg-clip-text text-transparent whitespace-nowrap">AI-powered</span> resumes in minutes — ready to impress in interviews.
+                                                                                                                                                        <h1 className="text-5xl md:text-6xl font-semibold max-w-5xl text-center mt-4 md:leading-[70px]">
+                                                                                                                                                                Land your dream job with <span className=" bg-gradient-to-r from-[var(--textdark)] to-[var(--textlight)] bg-clip-text text-transparent text-nowrap">AI-powered </span> resumes.
                                                                             </h1>
 
-                                                                            <p className="max-w-4xl text-center text-base my-7">
-                                                                                ResumeLab helps students and freelancers turn experience into tailored, professional resumes with customizable templates, one-click optimization for job descriptions, and easy PDF export.
-                                                                            </p>
+                                                                            <p className="max-w-md text-center text-base my-7">Create, edit and download professional resumes with AI-powered assistance.</p>
 
                                                                             {/* CTA Buttons */}
                                     <div className="flex items-center gap-4 ">
-                                            <Link to='/app' className="bg-[#c01219] hover:bg-[#990f13] text-white rounded-full px-9 h-12 m-1 ring-offset-2 ring-1 ring-[#c01219] flex items-center transition-colors">
+                                            <Link to='/app' className="text-white rounded-full px-9 h-12 m-1 ring-offset-2 ring-1 ring-[var(--textdark)] bg-[var(--textdark)] hover:bg-[var(--textlight)] flex items-center transition-colors">
                                                     Get started
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right ml-1 size-4" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
                                             </Link>
-                                            <button className="flex items-center gap-2 border border-slate-400 hover:bg-[#fff6f6] transition rounded-full px-7 h-12 text-slate-700">
+                                            <button className="flex items-center gap-2 border border-[var(--textdark)] hover:bg-[var(--gradientend)] hover:text-[var(--textdark)] transition rounded-full px-7 h-12 text-slate-700">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-video size-5" aria-hidden="true"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"></path><rect x="2" y="6" width="14" height="12" rx="2"></rect></svg>
                                                     <span>Try demo</span>
                                             </button>
                                     </div>
 
 
-                            </div>
+                            
+                        </div>
                     </div>
                     <style>
                             {`

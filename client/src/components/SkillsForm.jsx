@@ -34,7 +34,7 @@ const SkillsForm = ({ data, onChange }) => {
             value={newSkill}
             onKeyDown={handleKeyPress}
             />
-            <button onClick={addSkill} disabled={!newSkill.trim} className='flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'>
+      <button onClick={addSkill} disabled={!newSkill.trim} className='flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed' style={{ backgroundColor: 'var(--textdark)' }}>
                 <Plus className="size-4"/> Add
             </button>
       </div>
@@ -42,9 +42,9 @@ const SkillsForm = ({ data, onChange }) => {
       {data.length > 0 ? (
         <div className='flex flex-wrap gap-2'>
             {data.map((skill, index)=>(
-                <span key={index} className='flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm'>
+        <span key={index} className='flex items-center gap-1 px-3 py-1 rounded-full text-sm' style={{ backgroundColor: 'var(--gradientend)', color: 'var(--textdark)' }}>
                     {skill}
-                    <button onClick={()=> removeSkill(index)} className="ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors">
+          <button onClick={()=> removeSkill(index)} className="ml-1 rounded-full p-0.5 transition-colors" style={{ color: 'var(--textdark)' }}>
                         <X className="w-3 h-3" />
                     </button>
                 </span>
@@ -60,8 +60,8 @@ const SkillsForm = ({ data, onChange }) => {
         </div>
     )}
 
-    <div className='bg-blue-50 p-3 rounded-lg'>
-        <p className='text-sm text-blue-800'><strong>Tip:</strong> Add 8-12 relevant skills. Include both technical skills (programming languages, tools) and soft skills (leadership, communication).</p>
+  <div className='p-3 rounded-lg' style={{ backgroundColor: 'var(--gradientend)' }}>
+    <p className='text-sm' style={{ color: 'var(--textdark)' }}><strong>Tip:</strong> Add 8-12 relevant skills. Include both technical skills (programming languages, tools) and soft skills (leadership, communication).</p>
     </div>
     </div>
   )
