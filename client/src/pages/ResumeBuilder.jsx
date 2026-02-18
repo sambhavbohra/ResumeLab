@@ -60,6 +60,40 @@ const ResumeBuilder = () => {
 
   const activeSection = sections[activeSectionIndex]
 
+  // Validation function to check required fields before moving to next section
+  const validateCurrentSection = () => {
+    const sectionId = sections[activeSectionIndex].id
+    
+    switch(sectionId) {
+      case 'personal':
+        if (!resumeData.personal_info?.full_name?.trim()) {
+          toast.error('Please enter your full name')
+          return false
+        }
+        if (!resumeData.personal_info?.email?.trim()) {
+          toast.error('Please enter your email address')
+          return false
+        }
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(resumeData.personal_info.email)) {
+          toast.error('Please enter a valid email address')
+          return false
+        }
+        return true
+      
+      default:
+        return true
+    }
+  }
+
+  const handleNext = () => {
+    if (!validateCurrentSection()) {
+      return
+    }
+    setActiveSectionIndex((prevIndex) => Math.min(prevIndex + 1, sections.length - 1))
+  }
+
   useEffect(()=>{
     loadExistingResume()
   },[])
@@ -151,7 +185,7 @@ const saveResume = async () => {
                       <ChevronLeft className="size-4"/> Previous
                     </button>
                   )}
-                  <button onClick={()=> setActiveSectionIndex((prevIndex)=> Math.min(prevIndex + 1, sections.length - 1))} className={`flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all ${activeSectionIndex === sections.length - 1 && 'opacity-50'}`} disabled={activeSectionIndex === sections.length - 1}>
+                  <button onClick={handleNext} className={`flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all ${activeSectionIndex === sections.length - 1 && 'opacity-50'}`} disabled={activeSectionIndex === sections.length - 1}>
                       Next <ChevronRight className="size-4"/>
                     </button>
                 </div>
