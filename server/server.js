@@ -5,6 +5,7 @@ import connectDB from "./configs/db.js";
 import userRouter from "./routes/userRoutes.js";
 import resumeRouter from "./routes/resumeRoutes.js";
 import aiRouter from "./routes/aiRoutes.js";
+import { apiLimiter } from "./middlewares/rateLimiter.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,6 +15,9 @@ await connectDB()
 
 app.use(express.json())
 app.use(cors())
+
+// Apply global rate limiting
+app.use('/api', apiLimiter)
 
 app.get('/', (req, res)=> res.send("Server is live..."))
 app.use('/api/users', userRouter)
