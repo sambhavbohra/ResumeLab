@@ -41,7 +41,7 @@ export const sendOtp = async (req, res) => {
         // Save OTP to database
         await Otp.create({ email, otp });
 
-        // Send OTP via email
+        // Send OTP via email (with timeouts configured in nodemailer)
         await sendOtpEmail(email, otp);
 
         return res.status(200).json({ message: 'OTP sent successfully to your email' });
