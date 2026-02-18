@@ -1,4 +1,5 @@
 import React from 'react'
+import Logo from '../../assets/Logo.png'
 
 const Footer = () => {
   return (
@@ -7,7 +8,7 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto px-6 py-16 flex flex-col items-center">
                 <div className="flex items-center space-x-3 mb-6">
                     <img alt="ResumeLab" className="h-11"
-                        src="/src/assets/Logo.png" />
+                        src={Logo} />
                 </div>
                 <p className="text-center max-w-xl text-sm font-normal leading-relaxed">
                     Create stunning, ATS-friendly resumes in minutes. ResumeLab empowers job seekers with intelligent templates, 
