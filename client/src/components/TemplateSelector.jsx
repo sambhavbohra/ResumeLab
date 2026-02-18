@@ -1,4 +1,4 @@
-import { Check, Layout } from 'lucide-react'
+import { Check, Layout, ImageIcon } from 'lucide-react'
 import React, { useState } from 'react'
 
 const TemplateSelector = ({ selectedTemplate, onChange }) => {
@@ -8,27 +8,32 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
         {
             id: "classic",
             name: "Classic",
-            preview: "A clean, traditional resume format with clear sections and professional typography"
+            preview: "A clean, traditional resume format with clear sections and professional typography",
+            hasPhoto: false
         },
         {
             id: "modern",
             name: "Modern",
-            preview: "Sleek design with strategic use of color and modern font choices"
+            preview: "Sleek design with strategic use of color and modern font choices",
+            hasPhoto: false
         },
         {
             id: "minimal-image",
             name: "Minimal Image",
-            preview: "Minimal design with a single image and clean typography"
+            preview: "Minimal design with a profile photo and clean typography",
+            hasPhoto: true
         },
         {
             id: "minimal",
             name: "Minimal",
-            preview: "Ultra-clean design that puts your content front and center"
+            preview: "Ultra-clean design that puts your content front and center",
+            hasPhoto: false
         },
         {
             id: "creative",
             name: "Creative",
-            preview: "Fun, emoji-styled headers with a compact professional layout"
+            preview: "Fun, emoji-styled headers with a compact professional layout",
+            hasPhoto: false
         },
     ]
   return (
@@ -52,7 +57,14 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
                     )}
 
                     <div className="space-y-1">
-                        <h4 className='font-medium text-gray-800'>{template.name}</h4>
+                        <div className='flex items-center gap-2'>
+                            <h4 className='font-medium text-gray-800'>{template.name}</h4>
+                            {template.hasPhoto && (
+                                <span className='flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700'>
+                                    <ImageIcon className='size-3'/> Photo
+                                </span>
+                            )}
+                        </div>
                         <div className='mt-2 p-2 bg-blue-50 rounded text-xs text-gray-500 italic'>{template.preview}</div>
                     </div>
                 </div>
