@@ -20,6 +20,10 @@ app.use(cors())
 app.use('/api', apiLimiter)
 
 app.get('/', (req, res)=> res.send("Server is live..."))
+
+// Health check endpoint for uptime monitoring (helps with Render cold starts)
+app.get('/health', (req, res)=> res.json({ status: 'ok', timestamp: new Date().toISOString() }))
+
 app.use('/api/users', userRouter)
 app.use('/api/resumes', resumeRouter)
 app.use('/api/ai', aiRouter)

@@ -27,11 +27,11 @@ export const getErrorMessage = (error) => {
 
     // Network errors
     if (error?.code === 'ERR_NETWORK' || error?.message === 'Network Error') {
-        return "Unable to connect. Please check your internet connection.";
+        return "Server is currently unavailable. Please try again in a minute.";
     }
 
     if (error?.code === 'ECONNABORTED') {
-        return "Request took too long. Please try again.";
+        return "Server is taking too long to respond. It may be starting up - please try again.";
     }
 
     // Default fallback - avoid showing technical messages
