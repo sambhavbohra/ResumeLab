@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import api from '../configs/api'
 import toast from 'react-hot-toast'
 import pdfToText from 'react-pdftotext'
+import getErrorMessage from '../utils/errorHandler'
 
 const Dashboard = () => {
 
@@ -27,7 +28,7 @@ const Dashboard = () => {
       const { data } = await api.get('/api/users/resumes', {headers: { Authorization: token }})
       setAllResumes(data.resumes)
     } catch (error) {
-      toast.error(error?.response?.data?.message || error.message)
+      toast.error(getErrorMessage(error))
     }
   }
 
@@ -40,7 +41,7 @@ const Dashboard = () => {
     setShowCreateResume(false)
     navigate(`/app/builder/${data.resume._id}`)
    } catch (error) {
-    toast.error(error?.response?.data?.message || error.message)
+    toast.error(getErrorMessage(error))
    }
   }
 
@@ -55,7 +56,7 @@ const Dashboard = () => {
       setShowUploadResume(false)
       navigate(`/app/builder/${data.resumeId}`)
     } catch (error) {
-      toast.error(error?.response?.data?.message || error.message)
+      toast.error(getErrorMessage(error))
     }
     setIsLoading(false)
   }
@@ -69,7 +70,7 @@ const Dashboard = () => {
       setEditResumeId('')
       toast.success(data.message)
     } catch (error) {
-      toast.error(error?.response?.data?.message || error.message)
+      toast.error(getErrorMessage(error))
     }
      
   }
@@ -83,7 +84,7 @@ const Dashboard = () => {
       toast.success(data.message)
      }
     } catch (error) {
-      toast.error(error?.response?.data?.message || error.message)
+      toast.error(getErrorMessage(error))
     }
      
   }

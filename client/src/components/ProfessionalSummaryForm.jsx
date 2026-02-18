@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import api from '../configs/api'
 import toast from 'react-hot-toast'
+import getErrorMessage from '../utils/errorHandler'
 
 const ProfessionalSummaryForm = ({data, onChange, setResumeData}) => {
 
@@ -16,7 +17,7 @@ const ProfessionalSummaryForm = ({data, onChange, setResumeData}) => {
       const response = await api.post('/api/ai/enhance-pro-sum', {userContent: prompt}, {headers: { Authorization: token }})
       setResumeData(prev => ({...prev, professional_summary: response.data.enhancedContent}))
     } catch (error) {
-      toast.error(error?.response?.data?.message || error.message)
+      toast.error(getErrorMessage(error))
     }
     finally{
       setIsGenerating(false)

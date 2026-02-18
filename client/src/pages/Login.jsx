@@ -4,6 +4,7 @@ import api from '../configs/api'
 import { useDispatch } from 'react-redux'
 import { login } from '../app/features/authSlice'
 import toast from 'react-hot-toast'
+import getErrorMessage from '../utils/errorHandler'
 
 const Login = () => {
 
@@ -56,7 +57,7 @@ const Login = () => {
             toast.success(data.message)
             setRegistrationStep(2)
         } catch (error) {
-            toast.error(error?.response?.data?.message || error.message)
+            toast.error(getErrorMessage(error))
         } finally {
             setLoading(false)
         }
@@ -79,7 +80,7 @@ const Login = () => {
             setEmailVerified(true)
             setRegistrationStep(3)
         } catch (error) {
-            toast.error(error?.response?.data?.message || error.message)
+            toast.error(getErrorMessage(error))
         } finally {
             setLoading(false)
         }
@@ -108,7 +109,7 @@ const Login = () => {
             localStorage.setItem('token', data.token)
             toast.success(data.message)
         } catch (error) {
-            toast.error(error?.response?.data?.message || error.message)
+            toast.error(getErrorMessage(error))
         } finally {
             setLoading(false)
         }
@@ -127,7 +128,7 @@ const Login = () => {
             localStorage.setItem('token', data.token)
             toast.success(data.message)
         } catch (error) {
-            toast.error(error?.response?.data?.message || error.message)
+            toast.error(getErrorMessage(error))
         } finally {
             setLoading(false)
         }

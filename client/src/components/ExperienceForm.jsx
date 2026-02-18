@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import api from '../configs/api'
 import toast from 'react-hot-toast'
+import getErrorMessage from '../utils/errorHandler'
 
 const ExperienceForm = ({ data, onChange }) => {
 
@@ -41,7 +42,7 @@ const updateExperience = (index, field, value)=>{
         const { data } = await api.post('/api/ai/enhance-job-desc', {userContent: prompt}, { headers: { Authorization: token } })
         updateExperience(index, "description", data.enhancedContent)
     } catch (error) {
-        toast.error(error?.response?.data?.message || error.message)
+        toast.error(getErrorMessage(error))
     }finally{
         setGeneratingIndex(-1)
     }
