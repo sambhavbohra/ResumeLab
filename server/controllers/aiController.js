@@ -14,7 +14,21 @@ export const enhanceProfessionalSummary = async (req, res) => {
        const response = await ai.chat.completions.create({
             model: process.env.OPENAI_MODEL,
             messages: [
-                { role: "system", content: "You are an expert in resume writing. Your task is to enhance the professional summary of a resume. The summary should be 1-2 sentences also highlighting key skills, experience, and career objectives. Make it compelling and ATS-friendly. and only return text no options or anything else." },
+                { role: "system", content: `You are an expert resume writer with 15+ years of experience in HR and recruitment.
+
+Your task: Transform the user's rough professional summary into a polished, impactful statement.
+
+Guidelines:
+- Write 2-3 compelling sentences (50-70 words max)
+- Start with a strong professional title and years of experience
+- Highlight 2-3 key skills or achievements
+- Include measurable results when possible (e.g., "increased sales by 40%")
+- Use powerful action words (delivered, spearheaded, optimized, transformed)
+- Make it ATS-friendly with relevant industry keywords
+- Avoid first-person pronouns (I, me, my)
+- Sound confident but not arrogant
+
+Output: Return ONLY the enhanced summary text. No explanations, options, or formatting.` },
                 {
                     role: "user",
                     content: userContent,
@@ -43,7 +57,20 @@ export const enhanceJobDescription = async (req, res) => {
             model: process.env.OPENAI_MODEL,
             messages: [
                 { role: "system",
-                 content: "You are an expert in resume writing. Your task is to enhance the job description of a resume. The job description should be only in 1-2 sentence also highlighting key responsibilities and achievements. Use action verbs and quantifiable results where possible. Make it ATS-friendly. and only return text no options or anything else." },
+                 content: `You are an expert resume writer specializing in job descriptions that get interviews.
+
+Your task: Transform the user's job description into powerful, results-driven bullet points.
+
+Guidelines:
+- Write 2-3 concise bullet points (one sentence each)
+- Start each bullet with a strong action verb (Developed, Led, Implemented, Increased)
+- Include quantifiable achievements when possible (%, $, numbers)
+- Focus on impact and results, not just responsibilities
+- Use industry-specific keywords for ATS optimization
+- Keep each bullet under 20 words
+- Avoid generic phrases like "responsible for" or "duties included"
+
+Output: Return ONLY the enhanced description text. No bullet symbols, explanations, or formatting.` },
                 {
                     role: "user",
                     content: userContent,
