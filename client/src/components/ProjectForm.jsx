@@ -49,11 +49,11 @@ const updateProject = (index, field, value)=>{
 
                     <div className='grid gap-3'>
 
-                        <input value={project.name || ""} onChange={(e)=>updateProject(index, "name", e.target.value)} type="text" placeholder="Project Name" className="px-3 py-2 text-sm rounded-lg"/>
+                        <input value={project.name || ""} onChange={(e)=>updateProject(index, "name", e.target.value)} type="text" placeholder="Project Name" className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors"/>
 
-                        <input value={project.type || ""} onChange={(e)=>updateProject(index, "type", e.target.value)} type="text" placeholder="Project Type" className="px-3 py-2 text-sm rounded-lg"/>
+                        <input value={project.type || ""} onChange={(e)=>updateProject(index, "type", e.target.value)} type="text" placeholder="Project Type" className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors"/>
 
-                        <textarea rows={4} value={project.description || ""} onChange={(e)=>updateProject(index, "description", e.target.value)} placeholder="Describe your project..." className="w-full px-3 py-2 text-sm rounded-lg resize-none"/>
+                        <textarea rows={4} value={project.description || ""} onChange={(e)=>updateProject(index, "description", e.target.value)} placeholder="Describe your project..." className="w-full px-3 py-2 text-sm rounded-lg resize-none border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors"/>
             
                     </div>
 

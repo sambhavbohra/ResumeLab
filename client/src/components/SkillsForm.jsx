@@ -29,7 +29,7 @@ const SkillsForm = ({ data, onChange }) => {
       </div>
 
       <div className="flex gap-2">
-            <input type="text" placeholder="Enter a skill (e.g., JavaScript, Project Management)" className='flex-1 px-3 py-2 text-sm'
+            <input type="text" placeholder="Enter a skill (e.g., JavaScript, Project Management)" className='flex-1 px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors'
             onChange={(e)=>setNewSkill(e.target.value)}
             value={newSkill}
             onKeyDown={handleKeyPress}
