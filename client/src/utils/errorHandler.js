@@ -41,7 +41,10 @@ export const getErrorMessage = (error) => {
         /request failed/i,
         /\d{3}/,  // numeric codes
         /connection refused/i,
-        /timeout/i
+        /timeout/i,
+        /cast to string/i,
+        /validation failed/i,
+        /type.*object/i
     ];
 
     const errorMessage = error?.message || 'Something went wrong';

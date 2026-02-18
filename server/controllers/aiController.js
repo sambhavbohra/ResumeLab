@@ -97,52 +97,58 @@ export const uploadResume = async (req, res) => {
             return res.status(400).json({message: 'Missing required fields'})
         }
 
-        const systemPrompt = "You are an expert AI Agent to extract data from resume."
+        const systemPrompt = "You are an expert AI Agent to extract data from resume. Extract the information and return it as valid JSON with actual values, not schema definitions."
 
-        const userPrompt = `extract data from this resume: ${resumeText}
+        const userPrompt = `Extract data from this resume: ${resumeText}
         
-        Provide data in the following JSON format with no additional text before or after:
+        Return a JSON object with the actual extracted values in this exact structure:
 
         {
-        professional_summary: { type: String, default: '' },
-        skills: [{ type: String }],
-        personal_info: {
-            image: {type: String, default: '' },
-            full_name: {type: String, default: '' },
-            profession: {type: String, default: '' },
-            email: {type: String, default: '' },
-            phone: {type: String, default: '' },
-            location: {type: String, default: '' },
-            linkedin: {type: String, default: '' },
-            website: {type: String, default: '' },
-        },
-        experience: [
-            {
-                company: { type: String },
-                position: { type: String },
-                start_date: { type: String },
-                end_date: { type: String },
-                description: { type: String },
-                is_current: { type: Boolean },
-            }
-        ],
-        project: [
-            {
-                name: { type: String },
-                type: { type: String },
-                description: { type: String },
-            }
-        ],
-        education: [
-            {
-                institution: { type: String },
-                degree: { type: String },
-                field: { type: String },
-                graduation_date: { type: String },
-                gpa: { type: String },
-            }
-        ],          
+            "professional_summary": "extracted summary text here",
+            "skills": ["skill1", "skill2", "skill3"],
+            "personal_info": {
+                "image": "",
+                "full_name": "extracted name",
+                "profession": "extracted profession/title",
+                "email": "extracted email",
+                "phone": "extracted phone",
+                "location": "extracted location",
+                "linkedin": "extracted linkedin url or empty string",
+                "website": "extracted website url or empty string"
+            },
+            "experience": [
+                {
+                    "company": "company name",
+                    "position": "job title",
+                    "start_date": "YYYY-MM format",
+                    "end_date": "YYYY-MM format or Present",
+                    "description": "job description",
+                    "is_current": false
+                }
+            ],
+            "projects": [
+                {
+                    "name": "project name",
+                    "type": "project type",
+                    "description": "project description"
+                }
+            ],
+            "education": [
+                {
+                    "institution": "school/university name",
+                    "degree": "degree type",
+                    "field": "field of study",
+                    "graduation_date": "YYYY-MM format",
+                    "gpa": "GPA if mentioned or empty string"
+                }
+            ]
         }
+
+        Important:
+        - Return actual extracted values, NOT type definitions
+        - Use empty strings "" for missing fields
+        - Use empty arrays [] if no items found
+        - Ensure valid JSON format
         `;
 
        const response = await ai.chat.completions.create({
@@ -164,6 +170,10 @@ export const uploadResume = async (req, res) => {
 
         res.json({resumeId: newResume._id})
     } catch (error) {
+        // Handle validation errors with user-friendly message
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({message: 'Unable to process resume. Please try uploading again or create a new resume manually.'})
+        }
         return res.status(400).json({message: error.message})
     }
 }
