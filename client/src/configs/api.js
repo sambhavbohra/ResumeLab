@@ -1,51 +1,32 @@
 import axios from 'axios'
-import toast from 'react-hot-toast'
-
-// Track if we're currently waking up the server
-let isServerWakingUp = false
-let wakeUpToastId = null
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
     timeout: 60000 // 60 second timeout for cold starts
 })
 
-// Request interceptor - show waking up message on slow requests
-api.interceptors.request.use((config) => {
-    // Set a timer to show "server waking up" after 5 seconds
-    config.wakeUpTimer = setTimeout(() => {
-        if (!isServerWakingUp) {
-            isServerWakingUp = true
-            wakeUpToastId = toast.loading('Server is waking up... This may take a moment.', {
-                duration: Infinity
-            })
-        }
-    }, 5000)
-    
-    return config
-})
+// Server warm-up: Ping server every 10 minutes to keep it awake
+const WARM_UP_INTERVAL = 10 * 60 * 1000 // 10 minutes in milliseconds
 
-// Response interceptor - clear the waking up state
+const warmUpServer = async () => {
+    try {
+        await axios.get(`${import.meta.env.VITE_BASE_URL}/health`, { timeout: 10000 })
+    } catch (error) {
+        // Silent fail - just trying to keep server warm
+    }
+}
+
+// Initial warm-up on app load
+warmUpServer()
+
+// Schedule periodic warm-ups
+setInterval(warmUpServer, WARM_UP_INTERVAL)
+
+// Response interceptor - handle errors with retry
 api.interceptors.response.use(
-    (response) => {
-        // Clear the timer and dismiss toast
-        if (response.config.wakeUpTimer) {
-            clearTimeout(response.config.wakeUpTimer)
-        }
-        if (wakeUpToastId) {
-            toast.dismiss(wakeUpToastId)
-            wakeUpToastId = null
-            isServerWakingUp = false
-        }
-        return response
-    },
+    (response) => response,
     async (error) => {
         const originalRequest = error.config
-        
-        // Clear the timer
-        if (originalRequest?.wakeUpTimer) {
-            clearTimeout(originalRequest.wakeUpTimer)
-        }
 
         // If it's a network error or timeout, retry once
         if (
@@ -53,26 +34,11 @@ api.interceptors.response.use(
             !originalRequest._retry
         ) {
             originalRequest._retry = true
-            
-            // Show waking up message if not already shown
-            if (!isServerWakingUp) {
-                isServerWakingUp = true
-                wakeUpToastId = toast.loading('Server is waking up... Please wait.', {
-                    duration: Infinity
-                })
-            }
 
             // Wait 3 seconds before retry
             await new Promise(resolve => setTimeout(resolve, 3000))
             
             return api(originalRequest)
-        }
-
-        // Dismiss wake up toast on final failure
-        if (wakeUpToastId) {
-            toast.dismiss(wakeUpToastId)
-            wakeUpToastId = null
-            isServerWakingUp = false
         }
 
         return Promise.reject(error)
