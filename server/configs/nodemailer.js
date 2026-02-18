@@ -1,21 +1,10 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // Use TLS
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false // Allow self-signed certs (helps on some hosts)
-    }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendOtpEmail = async (email, otp) => {
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
+    await resend.emails.send({
+        from: 'ResumeLab <onboarding@resend.dev>', // Use your verified domain later
         to: email,
         subject: 'ResumeLab - Email Verification OTP',
         html: `
@@ -32,9 +21,5 @@ export const sendOtpEmail = async (email, otp) => {
                 </div>
             </div>
         `
-    };
-
-    await transporter.sendMail(mailOptions);
+    });
 };
-
-export default transporter;
