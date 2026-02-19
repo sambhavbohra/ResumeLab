@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendOtpEmail = async (email, otp) => {
     await resend.emails.send({
-        from: 'ResumeLab <onboarding@resend.dev>', // Use your verified domain later
+        from: 'ResumeLab <noreply@resume-lab.tech>',
         to: email,
         subject: 'ResumeLab - Email Verification OTP',
         html: `
