@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { dummyResumeData } from '../assets/assets'
 import { ArrowLeftIcon, Briefcase, ChevronLeft, ChevronRight, DownloadIcon, EyeIcon, EyeOffIcon, FileText, FolderIcon, GraduationCap, Share2Icon, Sparkles, User } from 'lucide-react'
+import html2pdf from 'html2pdf.js'
 import PersonalInfoForm from '../components/PersonalInfoForm'
 import ResumePreview from '../components/ResumePreview'
 import TemplateSelector from '../components/TemplateSelector'
@@ -124,8 +125,23 @@ const ResumeBuilder = () => {
     }
   }
 
-  const downloadResume = ()=>{
-    window.print();
+  const downloadResume = () => {
+    const element = document.getElementById('resume-preview');
+    const name = resumeData?.personal_info?.name || 'Resume';
+    
+    const opt = {
+      margin: 0,
+      filename: `${name.replace(/\s+/g, '_')}_Resume.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save();
   }
 
 
