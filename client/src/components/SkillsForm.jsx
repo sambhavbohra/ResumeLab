@@ -34,7 +34,7 @@ const SkillsForm = ({ data, onChange }) => {
             value={newSkill}
             onKeyDown={handleKeyPress}
             />
-      <button onClick={addSkill} disabled={!newSkill.trim} className='flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed' style={{ backgroundColor: 'var(--textdark)' }}>
+      <button onClick={addSkill} disabled={!newSkill.trim()} className='flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed' style={{ backgroundColor: 'var(--textdark)' }}>
                 <Plus className="size-4"/> Add
             </button>
       </div>
