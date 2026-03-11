@@ -23,16 +23,23 @@ const generateOtp = () => {
 // POST: /api/users/send-otp
 export const sendOtp = async (req, res) => {
     try {
-        const { email } = req.body;
+        const { email, isPasswordReset } = req.body;
 
         if (!email) {
             return res.status(400).json({ message: 'Email is required' });
         }
 
-        // Check if user already exists
+        // Check user existence based on context
         const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User with this email already exists' });
+        
+        if (isPasswordReset) {
+            if (!existingUser) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+        } else {
+            if (existingUser) {
+                return res.status(400).json({ message: 'User with this email already exists' });
+            }
         }
 
         // Delete any existing OTP for this email
@@ -80,6 +87,48 @@ export const verifyOtp = async (req, res) => {
         return res.status(200).json({ message: 'Email verified successfully', verified: true, registrationToken });
 
     } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+}
+
+// controller for resetting password after OTP
+// POST: /api/users/reset-password
+export const resetPassword = async (req, res) => {
+    try {
+        const { newPassword } = req.body;
+        const resetToken = req.headers['x-registration-token'];
+
+        if (!resetToken) {
+            return res.status(401).json({ message: 'Unauthorized. Please verify OTP first.' });
+        }
+
+        if (!newPassword) {
+            return res.status(400).json({ message: 'New password is required.' });
+        }
+
+        // Verify token
+        const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
+        
+        if (!decoded.verified || !decoded.email) {
+            return res.status(400).json({ message: 'Invalid token.' });
+        }
+
+        const user = await User.findOne({ email: decoded.email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        // Hash new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        return res.status(200).json({ message: 'Password reset successfully. You can now login.' });
+
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Session expired. Please request a new OTP.' });
+        }
         return res.status(400).json({ message: error.message });
     }
 }

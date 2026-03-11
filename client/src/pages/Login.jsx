@@ -95,9 +95,8 @@ const Login = () => {
                             <p className="text-slate-600">Continue building your professional future.</p>
                         </div>
                         
-                        <form className="space-y-6" onSubmit={handleLogin}>
-                            {/* Social Login */}
-                            <div className="w-full flex justify-center">
+                        {/* Social Login */}
+                        <div className="w-full flex justify-center mb-6">
                                 <GoogleLogin
                                     theme="outline"
                                     width={350}
@@ -108,12 +107,13 @@ const Login = () => {
                                 />
                             </div>
                             
-                            <div className="relative flex items-center py-2">
+                        <div className="relative flex items-center py-2 mb-6">
                                 <div className="flex-grow border-t border-slate-200"></div>
                                 <span className="flex-shrink mx-4 text-xs font-bold uppercase tracking-widest text-slate-400">or use email</span>
                                 <div className="flex-grow border-t border-slate-200"></div>
                             </div>
                             
+                            <form className="space-y-6" onSubmit={handleLogin}>
                             {/* Email Field */}
                             <div className="relative">
                                 <label className="block mb-2 text-sm font-semibold text-slate-700">Email Address</label>
@@ -135,7 +135,7 @@ const Login = () => {
                             <div className="relative">
                                 <div className="flex justify-between items-center mb-2">
                                     <label className="text-sm font-semibold text-slate-700">Password</label>
-                                    <a className="text-xs font-bold text-[#ec5b13] hover:text-[#ec5b13]/80" href="#">Forgot Password?</a>
+                                    <Link className="text-xs font-bold text-[#ec5b13] hover:text-[#ec5b13]/80" to="/reset-password">Forgot Password?</Link>
                                 </div>
                                 <div className="relative">
                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
