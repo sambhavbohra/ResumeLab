@@ -84,44 +84,27 @@ const ResumeBuilder = () => {
     }
   }
 
-  const downloadResume = async () => {
+  const downloadResume = () => {
     try {
-      const element = document.getElementById('resume-preview');
-      if (!element) {
-        toast.error('Resume preview not found');
-        return;
-      }
-
-      const loadingToast = toast.loading('Generating PDF...');
-      
-      // Dynamically import html2pdf.js
-      const html2pdfModule = await import('html2pdf.js');
-      // Handle module interop (default export vs direct export)
-      const html2pdf = html2pdfModule.default ? html2pdfModule.default : html2pdfModule;
-
+      // Get the requested filename (e.g. "Alex_Smith_Resume")
       const name = resumeData?.personal_info?.full_name || 'Resume';
+      const fileName = `${name.replace(/\s+/g, '_')}_Resume`;
+      
+      // Save original title to restore later
+      const originalTitle = document.title;
+      // The browser uses the document title as the default PDF filename when printing
+      document.title = fileName;
 
-      const opt = {
-        margin: 0,
-        filename: `${name.replace(/\s+/g, '_')}_Resume.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          letterRendering: true,
-          windowWidth: element.scrollWidth,
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
+      // Trigger the native print dialog (perfectly handles Tailwind v4 oklch colors)
+      // The existing @media print CSS in ResumePreview.jsx handles hiding the rest of the UI
+      window.print();
 
-      await html2pdf().set(opt).from(element).save();
-      toast.dismiss(loadingToast);
-      toast.success('Resume downloaded!');
+      // Restore the original title
+      document.title = originalTitle;
+      
     } catch (error) {
       console.error('Download error:', error);
-      toast.dismiss();
-      toast.error('Failed to download. Please try again.');
+      toast.error('Failed to initiate download.');
     }
   }
 
