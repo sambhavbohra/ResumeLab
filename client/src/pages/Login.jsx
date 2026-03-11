@@ -178,7 +178,7 @@ const Login = () => {
                     <p className="text-gray-500 text-sm mt-2">Enter your email to get started</p>
                     <div className="flex items-center w-full mt-6 bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
                         <Mail size={13} color="#6B7280" />
-                        <input type="email" name="email" placeholder="Email id" className="border-none outline-none ring-0 flex-1" value={formData.email} onChange={handleChange} required />
+                        <input type="email" name="email" placeholder="Email id" className="border-none outline-none ring-0 flex-1" value={formData.email} onChange={handleChange} required autoComplete="email" />
                     </div>
                     <div className="relative inline-block w-full mt-6 p-0.5 rounded-full overflow-hidden hover:scale-105 transition duration-300 active:scale-100 before:content-[''] before:absolute before:inset-0 before:bg-[conic-gradient(from_0deg,_var(--textdark),_color-mix(in_srgb,_var(--textdark)_30%,_transparent),_var(--textdark))] button-wrapper">
                         <button type="submit" disabled={loading} className="relative z-10 rounded-full px-8 py-3 font-medium text-sm w-full text-white bg-[var(--textlight)] flex items-center justify-center gap-2">
@@ -198,7 +198,7 @@ const Login = () => {
                     <p className="text-gray-500 text-sm mt-2">Enter the OTP sent to {formData.email}</p>
                     <div className="flex items-center w-full mt-6 bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
                         <ShieldCheck size={13} color="#6B7280" />
-                        <input type="text" name="otp" placeholder="Enter 6-digit OTP" className="border-none outline-none ring-0 flex-1 tracking-widest text-center" value={formData.otp} onChange={handleChange} maxLength={6} required />
+                        <input type="text" name="otp" placeholder="Enter 6-digit OTP" className="border-none outline-none ring-0 flex-1 tracking-widest text-center" value={formData.otp} onChange={handleChange} maxLength={6} required autoComplete="one-time-code" />
                     </div>
                     <div className="relative inline-block w-full mt-6 p-0.5 rounded-full overflow-hidden hover:scale-105 transition duration-300 active:scale-100 before:content-[''] before:absolute before:inset-0 before:bg-[conic-gradient(from_0deg,_var(--textdark),_color-mix(in_srgb,_var(--textdark)_30%,_transparent),_var(--textdark))] button-wrapper">
                         <button type="submit" disabled={loading} className="relative z-10 rounded-full px-8 py-3 font-medium text-sm w-full text-white bg-[var(--textlight)] flex items-center justify-center gap-2">
@@ -222,11 +222,11 @@ const Login = () => {
                 <p className="text-gray-500 text-sm mt-2">Email verified! Enter your details</p>
                 <div className="flex items-center mt-6 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
                     <User2Icon size={16} color='#6B7280' />
-                    <input type="text" name="name" placeholder="Full Name" className="border-none outline-none ring-0 flex-1" value={formData.name} onChange={handleChange} required />
+                    <input type="text" name="name" placeholder="Full Name" className="border-none outline-none ring-0 flex-1" value={formData.name} onChange={handleChange} required autoComplete="name" />
                 </div>
                 <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
                     <Lock size={13} color="#6B7280" />
-                    <input type="password" name="password" placeholder="Password" className="border-none outline-none ring-0 flex-1" value={formData.password} onChange={handlePasswordChange} required />
+                    <input type="password" name="password" placeholder="Password" className="border-none outline-none ring-0 flex-1" value={formData.password} onChange={handlePasswordChange} required autoComplete="new-password" />
                 </div>
                 {formData.password && passwordErrors.length > 0 && (
                     <div className="mt-3 text-left text-xs">
@@ -274,11 +274,11 @@ const Login = () => {
                         <p className="text-gray-500 text-sm mt-2">Please login to continue</p>
                         <div className="flex items-center w-full mt-6 bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
                             <Mail size={13} color="#6B7280" />
-                            <input type="email" name="email" placeholder="Email id" className="border-none outline-none ring-0 flex-1" value={formData.email} onChange={handleChange} required />
+                            <input type="email" name="email" placeholder="Email id" className="border-none outline-none ring-0 flex-1" value={formData.email} onChange={handleChange} required autoComplete="email" />
                         </div>
                         <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
                             <Lock size={13} color="#6B7280" />
-                            <input type="password" name="password" placeholder="Password" className="border-none outline-none ring-0 flex-1" value={formData.password} onChange={handleChange} required />
+                            <input type="password" name="password" placeholder="Password" className="border-none outline-none ring-0 flex-1" value={formData.password} onChange={handleChange} required autoComplete="current-password" />
                         </div>
                         <div className="mt-4 text-left" style={{ color: 'var(--textdark)' }}>
                             <button className="text-sm" type="button">Forget password?</button>

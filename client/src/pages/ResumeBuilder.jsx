@@ -129,20 +129,10 @@ const ResumeBuilder = () => {
               {/* Section Navigation */}
               <div className="flex justify-between items-center mb-6 border-b border-gray-300 py-1">
 
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center w-full'>
                   <TemplateSelector selectedTemplate={resumeData.template} onChange={(template) => setResumeData(prev => ({ ...prev, template }))} />
+                  <div className='mx-2 h-6 w-px bg-slate-200'></div>
                   <ColorPicker selectedColor={resumeData.accent_color} onChange={(color) => setResumeData(prev => ({ ...prev, accent_color: color }))} />
-                </div>
-
-                <div className='flex items-center'>
-                  {activeSectionIndex !== 0 && (
-                    <button onClick={() => setActiveSectionIndex((prevIndex) => Math.max(prevIndex - 1, 0))} className='flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all' disabled={activeSectionIndex === 0}>
-                      <ChevronLeft className="size-4" /> Previous
-                    </button>
-                  )}
-                  <button onClick={handleNext} className={`flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all ${activeSectionIndex === sections.length - 1 && 'opacity-50'}`} disabled={activeSectionIndex === sections.length - 1}>
-                    Next <ChevronRight className="size-4" />
-                  </button>
                 </div>
               </div>
 
@@ -168,26 +158,48 @@ const ResumeBuilder = () => {
                 )}
 
               </div>
-              <button onClick={() => { toast.promise(saveResume, { loading: 'Saving...' }) }} className='bg-gradient-to-br from-[var(--background)] to-[var(--gradientend)] ring-[var(--gradientend)] text-[var(--textdark)] ring hover:ring-[var(--textlight)] transition-all rounded-md px-6 py-2 mt-6 text-sm'>
-                Save Changes
-              </button>
+              <div className='mt-8 pt-6 border-t border-slate-200 flex items-center justify-between'>
+                <button onClick={() => { toast.promise(saveResume, { loading: 'Saving...' }) }} className='px-5 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition-all duration-300 rounded-lg shadow-sm hover:shadow'>
+                  Save Changes
+                </button>
+
+                <div className='flex items-center gap-3'>
+                  {activeSectionIndex !== 0 && (
+                    <button onClick={() => setActiveSectionIndex((prevIndex) => Math.max(prevIndex - 1, 0))} className='flex items-center gap-1 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all duration-300' disabled={activeSectionIndex === 0}>
+                      <ChevronLeft className="size-4" /> Previous
+                    </button>
+                  )}
+                  <button onClick={handleNext} className={`flex items-center gap-1 px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 shadow-md hover:shadow-lg transition-all duration-300 ${activeSectionIndex === sections.length - 1 && 'opacity-50 cursor-not-allowed hidden'}`} disabled={activeSectionIndex === sections.length - 1}>
+                    Next <ChevronRight className="size-4" />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Right Panel - Preview */}
           <div className='lg:col-span-7 max-lg:mt-6'>
-            <div className='relative w-full'>
-              <div className='absolute bottom-3 left-0 right-0 flex items-center justify-end gap-2'>
+            <div className='relative w-full mb-4 flex justify-end'>
+              <div className='flex items-center gap-3 bg-white/50 p-2 rounded-xl backdrop-blur-sm border border-slate-200/60 shadow-sm'>
                 {resumeData.public && (
-                  <button onClick={handleShare} className='flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-[var(--background)] to-[var(--gradientend)] text-[var(--textdark)] rounded-lg ring-[var(--gradientend)] hover:ring transition-colors'>
+                  <button onClick={handleShare} className='flex items-center px-4 py-2 gap-2 text-sm font-medium text-[var(--textdark)] bg-[var(--background)]/20 hover:bg-[var(--background)]/40 rounded-lg transition-all duration-300'>
                     <Share2Icon className='size-4' /> Share
                   </button>
                 )}
-                <button onClick={changeResumeVisibility} className='flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-[var(--background)] to-[var(--gradientend)] text-[var(--textdark)] ring-[var(--gradientend)] rounded-lg hover:ring transition-colors'>
+                
+                <button 
+                  onClick={changeResumeVisibility} 
+                  className={`flex items-center px-4 py-2 gap-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                    resumeData.public 
+                      ? 'text-teal-700 bg-teal-100 hover:bg-teal-200 border border-teal-200' 
+                      : 'text-slate-600 bg-slate-100 hover:bg-slate-200 border border-slate-200'
+                  }`}
+                >
                   {resumeData.public ? <EyeIcon className="size-4" /> : <EyeOffIcon className="size-4" />}
                   {resumeData.public ? 'Public' : 'Private'}
                 </button>
-                <button onClick={downloadResume} className='flex items-center gap-2 px-6 py-2 text-xs bg-gradient-to-br from-[var(--background)] to-[var(--gradientend)] text-[var(--textdark)] rounded-lg ring-[var(--gradientend)] hover:ring transition-colors'>
+
+                <button onClick={downloadResume} className='flex items-center px-5 py-2 gap-2 text-sm font-medium text-white bg-slate-900 border border-slate-800 hover:bg-slate-800 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg'>
                   <DownloadIcon className='size-4' /> Download
                 </button>
               </div>

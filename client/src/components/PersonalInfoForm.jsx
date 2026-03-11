@@ -13,13 +13,13 @@ const PersonalInfoForm = ({data, onChange, removeBackground, setRemoveBackground
     }
 
     const fields = [
-        {key: "full_name", label: "Full Name", icon: User, type: "text", required: true},
-        {key: "email", label: "Email Address", icon: Mail, type: "email", required: true},
-        { key: "phone", label: "Phone Number", icon: Phone, type: "tel" },
-        { key: "location", label: "Location", icon: MapPin, type: "text" },
-        { key: "profession", label: "Profession", icon: BriefcaseBusiness, type: "text" },
-        { key: "linkedin", label: "LinkedIn Profile", icon: Linkedin, type: "url" },
-        { key: "website", label: "Personal Website", icon: Globe, type: "url" }
+        {key: "full_name", label: "Full Name", icon: User, type: "text", required: true, autoComplete: "name"},
+        {key: "email", label: "Email Address", icon: Mail, type: "email", required: true, autoComplete: "email"},
+        { key: "phone", label: "Phone Number", icon: Phone, type: "tel", autoComplete: "tel" },
+        { key: "location", label: "Location", icon: MapPin, type: "text", autoComplete: "address-level2" },
+        { key: "profession", label: "Profession", icon: BriefcaseBusiness, type: "text", autoComplete: "organization-title" },
+        { key: "linkedin", label: "LinkedIn Profile", icon: Linkedin, type: "url", autoComplete: "url" },
+        { key: "website", label: "Personal Website", icon: Globe, type: "url", autoComplete: "url" }
     ]
 
   return (
@@ -71,7 +71,7 @@ const PersonalInfoForm = ({data, onChange, removeBackground, setRemoveBackground
                     {field.label}
                     {field.required && <span style={{ color: 'var(--textdark)' }}>*</span>}
                 </label>
-                <input type={field.type} value={data[field.key] || ""} onChange={(e)=>handleChange(field.key, e.target.value)} className='mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-[var(--textlight)] focus:border-[var(--textdark)] outline-none transition-colors text-sm' placeholder={`Enter your ${field.label.toLowerCase()}`} required={field.required}/>
+                <input type={field.type} value={data[field.key] || ""} onChange={(e)=>handleChange(field.key, e.target.value)} className='mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-[3px] focus:ring-[var(--gradientend)] focus:border-[var(--textdark)] outline-none transition-all duration-300 shadow-sm text-sm bg-white hover:border-slate-400' placeholder={`Enter your ${field.label.toLowerCase()}`} required={field.required} autoComplete={field.autoComplete}/>
             </div>
         )
     })}

@@ -23,6 +23,12 @@
   --gradientend: #efb1b4;
 }
 
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 
 
 

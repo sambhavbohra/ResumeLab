@@ -79,14 +79,13 @@ const updateExperience = (index, field, value)=>{
                     </div>
 
                     <div className='grid md:grid-cols-2 gap-3'>
+                        <input value={experience.company || ""} onChange={(e)=>updateExperience(index, "company", e.target.value)} type="text" placeholder="Company Name" className="px-3 py-2 text-sm rounded-lg border border-slate-300 focus:border-[var(--textdark)] focus:ring-[3px] focus:ring-[var(--gradientend)] outline-none transition-all duration-300 shadow-sm bg-white hover:border-slate-400"/>
 
-                        <input value={experience.company || ""} onChange={(e)=>updateExperience(index, "company", e.target.value)} type="text" placeholder="Company Name" className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors"/>
+                        <input value={experience.position || ""} onChange={(e)=>updateExperience(index, "position", e.target.value)} type="text" placeholder="Job Title" className="px-3 py-2 text-sm rounded-lg border border-slate-300 focus:border-[var(--textdark)] focus:ring-[3px] focus:ring-[var(--gradientend)] outline-none transition-all duration-300 shadow-sm bg-white hover:border-slate-400"/>
 
-                        <input value={experience.position || ""} onChange={(e)=>updateExperience(index, "position", e.target.value)} type="text" placeholder="Job Title" className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors"/>
+                        <input value={experience.start_date || ""} onChange={(e)=>updateExperience(index, "start_date", e.target.value)} type="month" className="px-3 py-2 text-sm rounded-lg border border-slate-300 focus:border-[var(--textdark)] focus:ring-[3px] focus:ring-[var(--gradientend)] outline-none transition-all duration-300 shadow-sm bg-white hover:border-slate-400"/>
 
-                        <input value={experience.start_date || ""} onChange={(e)=>updateExperience(index, "start_date", e.target.value)} type="month" className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors"/>
-
-                        <input value={experience.end_date || ""} onChange={(e)=>updateExperience(index, "end_date", e.target.value)} type="month" disabled={experience.is_current} className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors disabled:bg-gray-100"/>
+                        <input value={experience.end_date || ""} onChange={(e)=>updateExperience(index, "end_date", e.target.value)} type="month" disabled={experience.is_current} className="px-3 py-2 text-sm rounded-lg border border-slate-300 focus:border-[var(--textdark)] focus:ring-[3px] focus:ring-[var(--gradientend)] outline-none transition-all duration-300 shadow-sm bg-white hover:border-slate-400 disabled:bg-slate-100 disabled:opacity-70 disabled:hover:border-slate-300"/>
                     </div>
 
                     <label className='flex items-center gap-2'>
@@ -96,18 +95,18 @@ const updateExperience = (index, field, value)=>{
 
                     <div className="space-y-2">
                         <div className='flex items-center justify-between'>
-                            <label className='text-sm font-medium text-gray-700'>Job Description</label>
-                            <button onClick={()=> generateDescription(index)} disabled={generatingIndex === index || !experience.position || !experience.company} className='flex items-center gap-1 px-2 py-1 text-xs rounded transition-colors disabled:opacity-50' style={{ backgroundColor: 'var(--gradientend)', color: 'var(--textdark)' }}>
+                            <label className='text-sm font-medium text-slate-700'>Job Description</label>
+                            <button onClick={()=> generateDescription(index)} disabled={generatingIndex === index || !experience.position || !experience.company} className='group relative flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden hover:shadow shadow-sm border border-[var(--gradientend)]' style={{ backgroundColor: 'var(--gradientend)', color: 'var(--textdark)' }}>
+                                {generatingIndex === index && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]"></div>}
                                 {generatingIndex === index ? (
-                                    <Loader2 className="w-3 h-3 animate-spin"/>
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin relative z-10"/>
                                 ): (
-                                    <Sparkles className='w-3 h-3'/>
+                                    <Sparkles className='w-3.5 h-3.5 relative z-10 group-hover:scale-110 transition-transform'/>
                                 )}
-                                
-                                Enhance with AI
+                                <span className='relative z-10'>Enhance with AI</span>
                             </button>
                         </div>
-                        <textarea value={experience.description || ""} onChange={(e)=> updateExperience(index, "description", e.target.value)} rows={4} className="w-full text-sm px-3 py-2 rounded-lg resize-none border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors" placeholder="Describe your key responsibilities and achievements..."/>
+                        <textarea value={experience.description || ""} onChange={(e)=> updateExperience(index, "description", e.target.value)} rows={4} className="w-full text-sm px-4 py-3 rounded-lg resize-none border border-slate-300 focus:border-[var(--textdark)] focus:ring-[3px] focus:ring-[var(--gradientend)] outline-none transition-all duration-300 shadow-sm bg-white hover:border-slate-400" placeholder="Describe your key responsibilities and achievements..."/>
                     </div>
                 </div>
             ))}

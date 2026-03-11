@@ -31,16 +31,16 @@ const ProfessionalSummaryForm = ({data, onChange, setResumeData}) => {
             <h3 className='flex items-center gap-2 text-lg font-semibold text-gray-900'> Professional Summary </h3>
             <p className='text-sm text-gray-500'>Add summary for your resume here</p>
         </div>
-        <button disabled={isGenerating} onClick={generateSummary} className='flex items-center gap-2 px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors disabled:opacity-50'>
-          {isGenerating ? (<Loader2 className="size-4 animate-spin"/>) : ( <Sparkles className="size-4"/>)}
-           {isGenerating ? "Enhancing..." : "AI Enhance"}
-            
+        <button disabled={isGenerating} onClick={generateSummary} className='group relative flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden'>
+          {isGenerating && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]"></div>}
+          {isGenerating ? (<Loader2 className="size-4 animate-spin"/>) : ( <Sparkles className="size-4 group-hover:scale-110 transition-transform"/>)}
+           <span className="relative z-10">{isGenerating ? "Enhancing..." : "AI Enhance"}</span>
         </button>
       </div>
 
-      <div className="mt-6">
-        <textarea value={data || ""} onChange={(e)=> onChange(e.target.value)} rows={7} className='w-full p-3 px-4 mt-2 border text-sm border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors resize-none' placeholder='Write a compelling professional summary that highlights your key strengths and career objectives...' />
-        <p className='text-xs text-gray-500 max-w-4/5 mx-auto text-center'>Tip: Keep it concise (3-4 sentences) and focus on your most relevant achievements and skills.</p>
+      <div className="mt-6 relative">
+        <textarea value={data || ""} onChange={(e)=> onChange(e.target.value)} rows={7} className='w-full p-3 px-4 mt-2 border text-sm border-slate-300 rounded-lg focus:ring-[3px] focus:ring-[var(--gradientend)] focus:border-[var(--textdark)] outline-none transition-all duration-300 shadow-sm bg-white hover:border-slate-400 resize-none' placeholder='Write a compelling professional summary that highlights your key strengths and career objectives...' />
+        <p className='text-xs text-slate-500 max-w-4/5 mx-auto text-center mt-2'>Tip: Keep it concise (3-4 sentences) and focus on your most relevant achievements and skills.</p>
       </div>
     </div>
   )
