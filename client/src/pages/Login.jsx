@@ -15,6 +15,16 @@ const Login = () => {
     const [registrationStep, setRegistrationStep] = React.useState(1) // 1: email, 2: OTP, 3: details
     const [loading, setLoading] = React.useState(false)
     const [emailVerified, setEmailVerified] = React.useState(false)
+    const [resendTimer, setResendTimer] = React.useState(0)
+
+    // Countdown effect for resend OTP timer
+    React.useEffect(() => {
+        if (resendTimer <= 0) return
+        const interval = setInterval(() => {
+            setResendTimer(prev => prev - 1)
+        }, 1000)
+        return () => clearInterval(interval)
+    }, [resendTimer])
 
     const [formData, setFormData] = React.useState({
         name: '',
@@ -56,6 +66,7 @@ const Login = () => {
             const { data } = await api.post('/api/users/send-otp', { email: formData.email })
             toast.success(data.message)
             setRegistrationStep(2)
+            setResendTimer(60)
         } catch (error) {
             toast.error(getErrorMessage(error))
         } finally {
@@ -155,6 +166,7 @@ const Login = () => {
         setEmailVerified(false)
         setFormData({ name: '', email: '', password: '', otp: '' })
         setPasswordErrors([])
+        setResendTimer(0)
     }
 
     // Render registration form based on step
@@ -194,7 +206,11 @@ const Login = () => {
                             {loading ? 'Verifying...' : 'Verify OTP'}
                         </button>
                     </div>
-                    <p className="text-gray-500 text-sm mt-3 cursor-pointer" onClick={handleSendOtp}>Didn't receive OTP? <span className="hover:underline" style={{ color: 'var(--textdark)' }}>Resend</span></p>
+                    {resendTimer > 0 ? (
+                        <p className="text-gray-400 text-sm mt-3">Resend OTP in <span className="font-medium" style={{ color: 'var(--textdark)' }}>{resendTimer}s</span></p>
+                    ) : (
+                        <p className="text-gray-500 text-sm mt-3 cursor-pointer" onClick={handleSendOtp}>Didn't receive OTP? <span className="hover:underline" style={{ color: 'var(--textdark)' }}>Resend</span></p>
+                    )}
                     <p onClick={() => setRegistrationStep(1)} className="text-gray-500 text-sm mt-2 mb-11 cursor-pointer"><span className="hover:underline" style={{ color: 'var(--textdark)' }}>Change email</span></p>
                 </form>
             )
