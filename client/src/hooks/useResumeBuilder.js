@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import api from '../../configs/api';
+import api from '../configs/api';
 import toast from 'react-hot-toast';
 
 export const useResumeBuilder = (resumeId) => {
