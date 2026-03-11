@@ -87,7 +87,12 @@ const ResumeBuilder = () => {
 
   const downloadResume = () => {
     const element = document.getElementById('resume-preview');
-    const name = resumeData?.personal_info?.name || 'Resume';
+    if (!element) {
+      toast.error('Resume preview not found');
+      return;
+    }
+
+    const name = resumeData?.personal_info?.full_name || 'Resume';
 
     const opt = {
       margin: 0,
@@ -96,12 +101,21 @@ const ResumeBuilder = () => {
       html2canvas: {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        letterRendering: true,
+        windowWidth: element.scrollWidth,
       },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(element).save();
+    toast.promise(
+      html2pdf().set(opt).from(element).save(),
+      {
+        loading: 'Generating PDF...',
+        success: 'Resume downloaded!',
+        error: 'Failed to download resume'
+      }
+    );
   }
 
   return (
