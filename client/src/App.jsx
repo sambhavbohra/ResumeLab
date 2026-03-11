@@ -5,6 +5,8 @@ import Layout from './pages/Layout'
 import Dashboard from './pages/Dashboard'
 import ResumeBuilder from './pages/ResumeBuilder'
 import Preview from './pages/Preview'
+import Login from './pages/Login'
+import Register from './pages/Register'
 import { useDispatch } from 'react-redux'
 import api from './configs/api'
 import { login, setLoading } from './app/features/authSlice'
@@ -41,6 +43,8 @@ const App = () => {
       <Toaster />
       <Routes>
         <Route path='/' element={<Home />}/>
+        <Route path='/login' element={<Login />}/>
+        <Route path='/register' element={<Register />}/>
 
         <Route path='app' element={<Layout />}>
           <Route index element={<Dashboard />}/>

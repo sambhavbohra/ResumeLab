@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken'
 import Resume from "../models/Resume.js";
 import Otp from "../models/Otp.js";
 import { sendOtpEmail } from "../configs/nodemailer.js";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 
 const generateToken = (userId) => {
@@ -140,6 +143,53 @@ export const loginUser = async (req, res) => {
 
     } catch (error) {
         return res.status(400).json({ message: error.message })
+    }
+}
+
+// controller for Google login
+// POST: /api/users/google-login
+export const googleLogin = async (req, res) => {
+    try {
+        const { token: googleToken } = req.body;
+
+        if (!googleToken) {
+            return res.status(400).json({ message: 'Google token is required' });
+        }
+
+        // Verify the Google ID token
+        const ticket = await client.verifyIdToken({
+            idToken: googleToken,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+        const { email, name } = payload;
+
+        // Check if user already exists in our database
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            // User doesn't exist, create a new one. 
+            // We create a random password since they logged in via Google.
+            const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const hashedPassword = await bcrypt.hash(randomPassword, 10);
+            
+            user = await User.create({
+                name,
+                email,
+                password: hashedPassword
+            });
+        }
+
+        // Generate our own JWT token for the session
+        const token = generateToken(user._id);
+        user.password = undefined;
+
+        return res.status(200).json({ message: 'Login successful', token, user });
+
+    } catch (error) {
+        console.error('Google login error:', error);
+        return res.status(400).json({ message: 'Invalid Google authentication' });
     }
 }
 

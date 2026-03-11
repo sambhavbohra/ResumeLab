@@ -1,5 +1,5 @@
 import express from "express";
-import { getUserById, getUserResumes, loginUser, registerUser, sendOtp, verifyOtp } from "../controllers/userController.js";
+import { getUserById, getUserResumes, loginUser, registerUser, sendOtp, verifyOtp, googleLogin } from "../controllers/userController.js";
 import protect from "../middlewares/authMiddleware.js";
 import { loginLimiter, registerLimiter, otpLimiter } from "../middlewares/rateLimiter.js";
 import { validatePassword, validateEmail } from "../middlewares/validation.js";
@@ -15,6 +15,7 @@ userRouter.post('/verify-otp', otpLimiter, validateRequest(verifyOtpSchema), ver
 // Auth routes with rate limiting and validation
 userRouter.post('/register', registerLimiter, validateRequest(registerUserSchema), registerUser);
 userRouter.post('/login', loginLimiter, validateRequest(loginUserSchema), loginUser);
+userRouter.post('/google-login', googleLogin);
 
 // Protected routes
 userRouter.get('/data', protect, getUserById);

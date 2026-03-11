@@ -1,142 +1,45 @@
-import { Lock, Mail, User2Icon, ShieldCheck, Loader2 } from 'lucide-react'
-import React from 'react'
+import { Eye, EyeOff, Lock, Mail, Loader2, FileText } from 'lucide-react'
+import React, { useState } from 'react'
+import { GoogleLogin } from '@react-oauth/google'
 import api from '../configs/api'
 import { useDispatch } from 'react-redux'
 import { login } from '../app/features/authSlice'
 import toast from 'react-hot-toast'
 import getErrorMessage from '../utils/errorHandler'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Login = () => {
-
     const dispatch = useDispatch()
-    const query = new URLSearchParams(window.location.search)
-    const urlState = query.get('state')
-    const [state, setState] = React.useState(urlState || "login")
-    const [registrationStep, setRegistrationStep] = React.useState(1) // 1: email, 2: OTP, 3: details
-    const [loading, setLoading] = React.useState(false)
-    const [emailVerified, setEmailVerified] = React.useState(false)
-    const [resendTimer, setResendTimer] = React.useState(0)
-
-    // Countdown effect for resend OTP timer
-    React.useEffect(() => {
-        if (resendTimer <= 0) return
-        const interval = setInterval(() => {
-            setResendTimer(prev => prev - 1)
-        }, 1000)
-        return () => clearInterval(interval)
-    }, [resendTimer])
-
-    const [formData, setFormData] = React.useState({
-        name: '',
+    const navigate = useNavigate()
+    const [loading, setLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
+    const [formData, setFormData] = useState({
         email: '',
-        password: '',
-        otp: ''
+        password: ''
     })
 
-    const [passwordErrors, setPasswordErrors] = React.useState([])
-
-    // Password validation function
-    const validatePassword = (password) => {
-        const errors = []
-        if (password.length < 8) errors.push('At least 8 characters')
-        if (!/[A-Z]/.test(password)) errors.push('One uppercase letter')
-        if (!/[a-z]/.test(password)) errors.push('One lowercase letter')
-        if (!/[0-9]/.test(password)) errors.push('One number')
-        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) errors.push('One special character')
-        return errors
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        setFormData(prev => ({ ...prev, [name]: value }))
     }
 
-    const handlePasswordChange = (e) => {
-        const { value } = e.target
-        setFormData(prev => ({ ...prev, password: value }))
-        if (state === 'register') {
-            setPasswordErrors(validatePassword(value))
-        }
-    }
-
-    // Send OTP for email verification
-    const handleSendOtp = async (e) => {
-        e.preventDefault()
-        if (!formData.email) {
-            toast.error('Please enter your email')
-            return
-        }
-        setLoading(true)
+    const handleGoogleLoginSuccess = async (credentialResponse) => {
+        setLoading(true);
         try {
-            const { data } = await api.post('/api/users/send-otp', { email: formData.email })
-            toast.success(data.message)
-            setRegistrationStep(2)
-            setResendTimer(60)
+            const { data } = await api.post('/api/users/google-login', {
+                token: credentialResponse.credential
+            });
+            dispatch(login(data));
+            localStorage.setItem('token', data.token);
+            toast.success(data.message);
+            navigate('/app');
         } catch (error) {
-            toast.error(getErrorMessage(error))
+            toast.error(getErrorMessage(error) || "Google Login Failed");
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
-    // Verify OTP
-    const handleVerifyOtp = async (e) => {
-        e.preventDefault()
-        if (!formData.otp) {
-            toast.error('Please enter the OTP')
-            return
-        }
-        setLoading(true)
-        try {
-            const { data } = await api.post('/api/users/verify-otp', {
-                email: formData.email,
-                otp: formData.otp
-            })
-            toast.success(data.message)
-            setEmailVerified(true)
-            setRegistrationStep(3)
-            // Store the temporary registration token for the final step
-            if (data.registrationToken) {
-                sessionStorage.setItem('registrationToken', data.registrationToken);
-            }
-        } catch (error) {
-            toast.error(getErrorMessage(error))
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    // Complete registration
-    const handleRegister = async (e) => {
-        e.preventDefault()
-        if (!emailVerified) {
-            toast.error('Please verify your email first')
-            return
-        }
-        const errors = validatePassword(formData.password)
-        if (errors.length > 0) {
-            toast.error('Please fix password requirements')
-            return
-        }
-        setLoading(true)
-        try {
-            const registrationToken = sessionStorage.getItem('registrationToken');
-            const { data } = await api.post('/api/users/register', {
-                name: formData.name,
-                email: formData.email,
-                password: formData.password
-            }, {
-                headers: {
-                    'x-registration-token': registrationToken || ''
-                }
-            })
-            dispatch(login(data))
-            localStorage.setItem('token', data.token)
-            sessionStorage.removeItem('registrationToken'); // Cleanup
-            toast.success(data.message)
-        } catch (error) {
-            toast.error(getErrorMessage(error))
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    // Login submission
     const handleLogin = async (e) => {
         e.preventDefault()
         setLoading(true)
@@ -148,6 +51,7 @@ const Login = () => {
             dispatch(login(data))
             localStorage.setItem('token', data.token)
             toast.success(data.message)
+            navigate('/app');
         } catch (error) {
             toast.error(getErrorMessage(error))
         } finally {
@@ -155,146 +59,125 @@ const Login = () => {
         }
     }
 
-    const handleChange = (e) => {
-        const { name, value } = e.target
-        setFormData(prev => ({ ...prev, [name]: value }))
-    }
-
-    const switchMode = () => {
-        setState(prev => prev === "login" ? "register" : "login")
-        setRegistrationStep(1)
-        setEmailVerified(false)
-        setFormData({ name: '', email: '', password: '', otp: '' })
-        setPasswordErrors([])
-        setResendTimer(0)
-    }
-
-    // Render registration form based on step
-    const renderRegistrationForm = () => {
-        if (registrationStep === 1) {
-            return (
-                <form onSubmit={handleSendOtp}>
-                    <h1 className="text-gray-900 text-3xl mt-10 font-medium">Sign up</h1>
-                    <p className="text-gray-500 text-sm mt-2">Enter your email to get started</p>
-                    <div className="flex items-center w-full mt-6 bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                        <Mail size={13} color="#6B7280" />
-                        <input type="email" name="email" placeholder="Email id" className="border-none outline-none ring-0 flex-1" value={formData.email} onChange={handleChange} required autoComplete="email" />
-                    </div>
-                    <div className="relative inline-block w-full mt-6 p-0.5 rounded-full overflow-hidden hover:scale-105 transition duration-300 active:scale-100 before:content-[''] before:absolute before:inset-0 before:bg-[conic-gradient(from_0deg,_var(--textdark),_color-mix(in_srgb,_var(--textdark)_30%,_transparent),_var(--textdark))] button-wrapper">
-                        <button type="submit" disabled={loading} className="relative z-10 rounded-full px-8 py-3 font-medium text-sm w-full text-white bg-[var(--textlight)] flex items-center justify-center gap-2">
-                            {loading ? <Loader2 className="animate-spin" size={18} /> : null}
-                            {loading ? 'Sending OTP...' : 'Send OTP'}
-                        </button>
-                    </div>
-                    <p onClick={switchMode} className="text-gray-500 text-sm mt-3 mb-11 cursor-pointer">Already have an account? <span className="hover:underline" style={{ color: 'var(--textdark)' }}>click here</span></p>
-                </form>
-            )
-        }
-
-        if (registrationStep === 2) {
-            return (
-                <form onSubmit={handleVerifyOtp}>
-                    <h1 className="text-gray-900 text-3xl mt-10 font-medium">Verify Email</h1>
-                    <p className="text-gray-500 text-sm mt-2">Enter the OTP sent to {formData.email}</p>
-                    <div className="flex items-center w-full mt-6 bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                        <ShieldCheck size={13} color="#6B7280" />
-                        <input type="text" name="otp" placeholder="Enter 6-digit OTP" className="border-none outline-none ring-0 flex-1 tracking-widest text-center" value={formData.otp} onChange={handleChange} maxLength={6} required autoComplete="one-time-code" />
-                    </div>
-                    <div className="relative inline-block w-full mt-6 p-0.5 rounded-full overflow-hidden hover:scale-105 transition duration-300 active:scale-100 before:content-[''] before:absolute before:inset-0 before:bg-[conic-gradient(from_0deg,_var(--textdark),_color-mix(in_srgb,_var(--textdark)_30%,_transparent),_var(--textdark))] button-wrapper">
-                        <button type="submit" disabled={loading} className="relative z-10 rounded-full px-8 py-3 font-medium text-sm w-full text-white bg-[var(--textlight)] flex items-center justify-center gap-2">
-                            {loading ? <Loader2 className="animate-spin" size={18} /> : null}
-                            {loading ? 'Verifying...' : 'Verify OTP'}
-                        </button>
-                    </div>
-                    {resendTimer > 0 ? (
-                        <p className="text-gray-400 text-sm mt-3">Resend OTP in <span className="font-medium" style={{ color: 'var(--textdark)' }}>{resendTimer}s</span></p>
-                    ) : (
-                        <p className="text-gray-500 text-sm mt-3 cursor-pointer" onClick={handleSendOtp}>Didn't receive OTP? <span className="hover:underline" style={{ color: 'var(--textdark)' }}>Resend</span></p>
-                    )}
-                    <p onClick={() => setRegistrationStep(1)} className="text-gray-500 text-sm mt-2 mb-11 cursor-pointer"><span className="hover:underline" style={{ color: 'var(--textdark)' }}>Change email</span></p>
-                </form>
-            )
-        }
-
-        return (
-            <form onSubmit={handleRegister}>
-                <h1 className="text-gray-900 text-3xl mt-10 font-medium">Complete Signup</h1>
-                <p className="text-gray-500 text-sm mt-2">Email verified! Enter your details</p>
-                <div className="flex items-center mt-6 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                    <User2Icon size={16} color='#6B7280' />
-                    <input type="text" name="name" placeholder="Full Name" className="border-none outline-none ring-0 flex-1" value={formData.name} onChange={handleChange} required autoComplete="name" />
-                </div>
-                <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                    <Lock size={13} color="#6B7280" />
-                    <input type="password" name="password" placeholder="Password" className="border-none outline-none ring-0 flex-1" value={formData.password} onChange={handlePasswordChange} required autoComplete="new-password" />
-                </div>
-                {formData.password && passwordErrors.length > 0 && (
-                    <div className="mt-3 text-left text-xs">
-                        <p className="text-gray-500 mb-1">Password must have:</p>
-                        {passwordErrors.map((error, i) => (
-                            <p key={i} className="text-red-500">• {error}</p>
-                        ))}
-                    </div>
-                )}
-                {formData.password && passwordErrors.length === 0 && (
-                    <p className="mt-2 text-left text-xs text-green-600">✓ Password meets all requirements</p>
-                )}
-                <div className="relative inline-block w-full mt-6 p-0.5 rounded-full overflow-hidden hover:scale-105 transition duration-300 active:scale-100 before:content-[''] before:absolute before:inset-0 before:bg-[conic-gradient(from_0deg,_var(--textdark),_color-mix(in_srgb,_var(--textdark)_30%,_transparent),_var(--textdark))] button-wrapper">
-                    <button type="submit" disabled={loading || passwordErrors.length > 0} className="relative z-10 rounded-full px-8 py-3 font-medium text-sm w-full text-white bg-[var(--textlight)] flex items-center justify-center gap-2 disabled:opacity-50">
-                        {loading ? <Loader2 className="animate-spin" size={18} /> : null}
-                        {loading ? 'Creating Account...' : 'Create Account'}
-                    </button>
-                </div>
-                <p onClick={switchMode} className="text-gray-500 text-sm mt-3 mb-11 cursor-pointer">Already have an account? <span className="hover:underline" style={{ color: 'var(--textdark)' }}>click here</span></p>
-            </form>
-        )
-    }
-
     return (
-        <div className='flex items-center justify-center min-h-screen bg-gray-50'>
-            <style>{`
-                .button-wrapper::before {
-                    animation: spin-gradient 4s linear infinite;
-                }
-
-                @keyframes spin-gradient {
-                    from {
-                        transform: rotate(0deg);
-                    }
-
-                    to {
-                        transform: rotate(360deg);
-                    }
-                }
-            `}</style>
-            <div className="sm:w-[350px] w-full text-center border border-gray-300/60 rounded-2xl px-8 bg-white">
-                {state === "login" ? (
-                    <form onSubmit={handleLogin}>
-                        <h1 className="text-gray-900 text-3xl mt-10 font-medium">Login</h1>
-                        <p className="text-gray-500 text-sm mt-2">Please login to continue</p>
-                        <div className="flex items-center w-full mt-6 bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                            <Mail size={13} color="#6B7280" />
-                            <input type="email" name="email" placeholder="Email id" className="border-none outline-none ring-0 flex-1" value={formData.email} onChange={handleChange} required autoComplete="email" />
-                        </div>
-                        <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                            <Lock size={13} color="#6B7280" />
-                            <input type="password" name="password" placeholder="Password" className="border-none outline-none ring-0 flex-1" value={formData.password} onChange={handleChange} required autoComplete="current-password" />
-                        </div>
-                        <div className="mt-4 text-left" style={{ color: 'var(--textdark)' }}>
-                            <button className="text-sm" type="button">Forget password?</button>
-                        </div>
-                        <div className="relative inline-block w-full mt-2 p-0.5 rounded-full overflow-hidden hover:scale-105 transition duration-300 active:scale-100 before:content-[''] before:absolute before:inset-0 before:bg-[conic-gradient(from_0deg,_var(--textdark),_color-mix(in_srgb,_var(--textdark)_30%,_transparent),_var(--textdark))] button-wrapper">
-                            <button type="submit" disabled={loading} className="relative z-10 rounded-full px-8 py-3 font-medium text-sm w-full text-white bg-[var(--textlight)] flex items-center justify-center gap-2">
-                                {loading ? <Loader2 className="animate-spin" size={18} /> : null}
-                                {loading ? 'Logging in...' : 'Login'}
-                            </button>
-                        </div>
-                        <p onClick={switchMode} className="text-gray-500 text-sm mt-3 mb-11 cursor-pointer">Don't have an account? <span className="hover:underline" style={{ color: 'var(--textdark)' }}>click here</span></p>
-                    </form>
-                ) : (
-                    renderRegistrationForm()
-                )}
+        <div className="bg-[#f8f6f6] min-h-screen flex flex-col font-sans selection:bg-[#ec5b13]/30">
+            {/* Background Glow Effect */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-[#ec5b13]/10 blur-[120px]"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full" style={{ background: 'radial-gradient(circle at center, rgba(99, 102, 241, 0.15) 0%, transparent 70%)' }}></div>
             </div>
+
+            {/* Navigation */}
+            <header className="relative z-10 w-full px-6 py-6 lg:px-20 flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                    <div className="text-[#ec5b13]">
+                        <FileText size={40} strokeWidth={1.5} />
+                    </div>
+                    <Link to="/" className="text-2xl font-black tracking-tight text-slate-900">
+                        Resume<span className="text-[#ec5b13]">Lab</span>
+                    </Link>
+                </div>
+                <div className="hidden md:flex items-center gap-6">
+                    <span className="text-slate-600 text-sm">New to ResumeLab?</span>
+                    <Link to="/register" className="px-5 py-2.5 rounded-xl bg-[#ec5b13]/10 text-[#ec5b13] hover:bg-[#ec5b13]/20 transition-all font-semibold text-sm">
+                        Create Account
+                    </Link>
+                </div>
+            </header>
+
+            {/* Main Content */}
+            <main className="relative z-10 flex-1 flex items-center justify-center p-6">
+                <div className="w-full max-w-[480px]">
+                    {/* Login Card */}
+                    <div className="bg-white/70 backdrop-blur-[16px] border border-white/10 p-8 md:p-10 rounded-3xl shadow-2xl">
+                        <div className="mb-10">
+                            <h2 className="text-3xl font-black text-slate-900 mb-2">Welcome Back</h2>
+                            <p className="text-slate-600">Continue building your professional future.</p>
+                        </div>
+                        
+                        <form className="space-y-6" onSubmit={handleLogin}>
+                            {/* Social Login */}
+                            <div className="w-full flex justify-center">
+                                <GoogleLogin
+                                    theme="outline"
+                                    width={350}
+                                    size="large"
+                                    text="signin_with"
+                                    onSuccess={handleGoogleLoginSuccess}
+                                    onError={() => { toast.error('Google Login Failed') }}
+                                />
+                            </div>
+                            
+                            <div className="relative flex items-center py-2">
+                                <div className="flex-grow border-t border-slate-200"></div>
+                                <span className="flex-shrink mx-4 text-xs font-bold uppercase tracking-widest text-slate-400">or use email</span>
+                                <div className="flex-grow border-t border-slate-200"></div>
+                            </div>
+                            
+                            {/* Email Field */}
+                            <div className="relative">
+                                <label className="block mb-2 text-sm font-semibold text-slate-700">Email Address</label>
+                                <div className="relative">
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                                    <input 
+                                        className="w-full h-14 pl-12 pr-4 rounded-xl border border-slate-200 bg-white/50 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-[#ec5b13] focus:border-[#ec5b13] outline-none transition-all" 
+                                        placeholder="name@company.com" 
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            
+                            {/* Password Field */}
+                            <div className="relative">
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="text-sm font-semibold text-slate-700">Password</label>
+                                    <a className="text-xs font-bold text-[#ec5b13] hover:text-[#ec5b13]/80" href="#">Forgot Password?</a>
+                                </div>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                                    <input 
+                                        className="w-full h-14 pl-12 pr-12 rounded-xl border border-slate-200 bg-white/50 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-[#ec5b13] focus:border-[#ec5b13] outline-none transition-all" 
+                                        placeholder="••••••••" 
+                                        type={showPassword ? "text" : "password"}
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    <button 
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" 
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {/* Submit Button */}
+                            <button 
+                                disabled={loading}
+                                className="w-full h-14 bg-[#ec5b13] text-white font-bold rounded-xl shadow-[0_0_20px_rgba(236,91,19,0.3)] hover:shadow-[0_0_25px_rgba(236,91,19,0.5)] hover:-translate-y-0.5 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:-translate-y-0" 
+                                type="submit"
+                            >
+                                {loading && <Loader2 className="animate-spin" size={18} />}
+                                {loading ? 'Signing In...' : 'Sign In'}
+                            </button>
+                        </form>
+                        
+                        <div className="mt-8 text-center md:hidden">
+                            <p className="text-sm text-slate-600">
+                                Don't have an account? 
+                                <Link className="text-[#ec5b13] font-bold ml-1" to="/register">Sign up</Link>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     )
 }
