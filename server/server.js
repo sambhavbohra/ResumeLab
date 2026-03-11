@@ -19,16 +19,21 @@ app.use(cors())
 // Apply global rate limiting
 app.use('/api', apiLimiter)
 
-app.get('/', (req, res)=> res.send("Server is live..."))
+app.get('/', (req, res) => res.send("Server is live..."))
 
 // Health check endpoint for uptime monitoring (helps with Render cold starts)
-app.get('/health', (req, res)=> res.json({ status: 'ok', timestamp: new Date().toISOString() }))
+app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }))
+
+import { errorHandler } from "./middlewares/errorHandler.js";
 
 app.use('/api/users', userRouter)
 app.use('/api/resumes', resumeRouter)
 app.use('/api/ai', aiRouter)
 
-app.listen(PORT, ()=>{
+// Error handling middleware (must be after all routes)
+app.use(errorHandler)
+
+app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    
+
 });

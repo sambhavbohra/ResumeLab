@@ -3,16 +3,18 @@ import { getUserById, getUserResumes, loginUser, registerUser, sendOtp, verifyOt
 import protect from "../middlewares/authMiddleware.js";
 import { loginLimiter, registerLimiter, otpLimiter } from "../middlewares/rateLimiter.js";
 import { validatePassword, validateEmail } from "../middlewares/validation.js";
+import { validateRequest } from "../middlewares/validateRequest.js";
+import { loginUserSchema, registerUserSchema, sendOtpSchema, verifyOtpSchema } from "../middlewares/validators.js";
 
 const userRouter = express.Router();
 
 // OTP routes
-userRouter.post('/send-otp', otpLimiter, validateEmail, sendOtp);
-userRouter.post('/verify-otp', otpLimiter, verifyOtp);
+userRouter.post('/send-otp', otpLimiter, validateRequest(sendOtpSchema), sendOtp);
+userRouter.post('/verify-otp', otpLimiter, validateRequest(verifyOtpSchema), verifyOtp);
 
 // Auth routes with rate limiting and validation
-userRouter.post('/register', registerLimiter, validatePassword, registerUser);
-userRouter.post('/login', loginLimiter, loginUser);
+userRouter.post('/register', registerLimiter, validateRequest(registerUserSchema), registerUser);
+userRouter.post('/login', loginLimiter, validateRequest(loginUserSchema), loginUser);
 
 // Protected routes
 userRouter.get('/data', protect, getUserById);

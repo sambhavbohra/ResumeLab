@@ -72,13 +72,17 @@ const Login = () => {
         }
         setLoading(true)
         try {
-            const { data } = await api.post('/api/users/verify-otp', { 
-                email: formData.email, 
-                otp: formData.otp 
+            const { data } = await api.post('/api/users/verify-otp', {
+                email: formData.email,
+                otp: formData.otp
             })
             toast.success(data.message)
             setEmailVerified(true)
             setRegistrationStep(3)
+            // Store the temporary registration token for the final step
+            if (data.registrationToken) {
+                sessionStorage.setItem('registrationToken', data.registrationToken);
+            }
         } catch (error) {
             toast.error(getErrorMessage(error))
         } finally {
@@ -100,13 +104,19 @@ const Login = () => {
         }
         setLoading(true)
         try {
+            const registrationToken = sessionStorage.getItem('registrationToken');
             const { data } = await api.post('/api/users/register', {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password
+            }, {
+                headers: {
+                    'x-registration-token': registrationToken || ''
+                }
             })
             dispatch(login(data))
             localStorage.setItem('token', data.token)
+            sessionStorage.removeItem('registrationToken'); // Cleanup
             toast.success(data.message)
         } catch (error) {
             toast.error(getErrorMessage(error))
@@ -195,11 +205,11 @@ const Login = () => {
                 <h1 className="text-gray-900 text-3xl mt-10 font-medium">Complete Signup</h1>
                 <p className="text-gray-500 text-sm mt-2">Email verified! Enter your details</p>
                 <div className="flex items-center mt-6 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                    <User2Icon size={16} color='#6B7280'/>
+                    <User2Icon size={16} color='#6B7280' />
                     <input type="text" name="name" placeholder="Full Name" className="border-none outline-none ring-0 flex-1" value={formData.name} onChange={handleChange} required />
                 </div>
                 <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                    <Lock size={13} color="#6B7280"/>
+                    <Lock size={13} color="#6B7280" />
                     <input type="password" name="password" placeholder="Password" className="border-none outline-none ring-0 flex-1" value={formData.password} onChange={handlePasswordChange} required />
                 </div>
                 {formData.password && passwordErrors.length > 0 && (
@@ -251,7 +261,7 @@ const Login = () => {
                             <input type="email" name="email" placeholder="Email id" className="border-none outline-none ring-0 flex-1" value={formData.email} onChange={handleChange} required />
                         </div>
                         <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                            <Lock size={13} color="#6B7280"/>
+                            <Lock size={13} color="#6B7280" />
                             <input type="password" name="password" placeholder="Password" className="border-none outline-none ring-0 flex-1" value={formData.password} onChange={handleChange} required />
                         </div>
                         <div className="mt-4 text-left" style={{ color: 'var(--textdark)' }}>

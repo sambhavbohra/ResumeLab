@@ -2,10 +2,12 @@ import express from "express";
 import protect from "../middlewares/authMiddleware.js";
 import { createResume, deleteResume, getPublicResumeById, getResumeById, updateResume } from "../controllers/resumeController.js";
 import upload from "../configs/multer.js";
+import { validateRequest } from "../middlewares/validateRequest.js";
+import { createResumeSchema } from "../middlewares/validators.js";
 
 const resumeRouter = express.Router();
 
-resumeRouter.post('/create', protect, createResume);
+resumeRouter.post('/create', protect, validateRequest(createResumeSchema), createResume);
 resumeRouter.put('/update', upload.single('image'), protect, updateResume);
 resumeRouter.delete('/delete/:resumeId', protect, deleteResume);
 resumeRouter.get('/get/:resumeId', protect, getResumeById);
