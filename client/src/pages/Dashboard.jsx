@@ -18,8 +18,9 @@ const Dashboard = () => {
   const [title, setTitle] = useState('')
   const [resume, setResume] = useState(null)
   const [editResumeId, setEditResumeId] = useState('')
-
   const [isLoading, setIsLoading] = useState(false)
+  const [deleteResumeId, setDeleteResumeId] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const navigate = useNavigate()
 
@@ -75,18 +76,22 @@ const Dashboard = () => {
      
   }
 
-  const deleteResume = async (resumeId) => {
+  const deleteResume = (resumeId) => {
+    setDeleteResumeId(resumeId)
+  }
+
+  const confirmDelete = async () => {
+    setIsDeleting(true)
     try {
-      const confirm = window.confirm('Are you sure you want to delete this resume?')
-     if(confirm){
-      const {data} = await api.delete(`/api/resumes/delete/${resumeId}`, {headers: { Authorization: token }})
-      setAllResumes(allResumes.filter(resume => resume._id !== resumeId))
+      const { data } = await api.delete(`/api/resumes/delete/${deleteResumeId}`, { headers: { Authorization: token } })
+      setAllResumes(allResumes.filter(resume => resume._id !== deleteResumeId))
+      setDeleteResumeId('')
       toast.success(data.message)
-     }
     } catch (error) {
       toast.error(getErrorMessage(error))
+    } finally {
+      setIsDeleting(false)
     }
-     
   }
 
   useEffect(()=>{
@@ -188,6 +193,37 @@ const Dashboard = () => {
           </form>
         )
         }
+
+        {deleteResumeId && (
+          <div onClick={()=> setDeleteResumeId('')} className='fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-10 flex items-center justify-center'>
+            <div onClick={e => e.stopPropagation()} className='relative bg-white border shadow-2xl rounded-2xl w-full max-w-sm p-8 text-center'>
+              <div className='mx-auto w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-6'>
+                <TrashIcon size={32} />
+              </div>
+              <h2 className='text-2xl font-bold text-slate-900 mb-2'>Delete Resume?</h2>
+              <p className='text-slate-500 mb-8'>This action cannot be undone. All your data for this resume will be permanently removed.</p>
+              
+              <div className='flex gap-3'>
+                <button 
+                  onClick={()=> setDeleteResumeId('')} 
+                  className='flex-1 py-3 px-4 rounded-xl font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all'
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={confirmDelete}
+                  disabled={isDeleting}
+                  className='flex-1 py-3 px-4 rounded-xl font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 transition-all flex items-center justify-center gap-2'
+                >
+                  {isDeleting && <LoaderCircleIcon className='animate-spin size-4'/>}
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+              
+              <XIcon className='absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors' onClick={()=> setDeleteResumeId('')}/>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>
