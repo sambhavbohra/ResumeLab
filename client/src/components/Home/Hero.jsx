@@ -1,5 +1,5 @@
 import React from 'react'
-import logo from '../../assets/Logo.png'
+import { FileText } from 'lucide-react'
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -16,9 +16,14 @@ const Hero = () => {
                         <div className="pb-20">
                                 {/* Navbar */}
                                 <nav className="z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 lg:px-24 xl:px-40 text-sm">
-                                        <a href="/">
-                                                <img src={logo} alt="logo" className="h-11 w-auto" />
-                                        </a>
+                                        <Link to="/" className="flex items-center gap-2">
+                                                <div className="text-[#ec5b13]">
+                                                        <FileText size={40} strokeWidth={1.5} />
+                                                </div>
+                                                <div className="text-2xl font-black tracking-tight text-slate-900">
+                                                        Resume<span className="text-[#ec5b13]">Lab</span>
+                                                </div>
+                                        </Link>
 
                                         <div className="hidden md:flex items-center gap-8 transition duration-500 text-slate-800">
                                                 <a href="#" className="transition hover:text-[var(--textdark)]">Home</a>

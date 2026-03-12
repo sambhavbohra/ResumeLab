@@ -1,5 +1,5 @@
 import React from 'react'
-import logo from '../assets/Logo.png'
+import { FileText } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { logout } from '../app/features/authSlice'
@@ -50,8 +50,13 @@ const Navbar = () => {
             }
         `}</style>
         <nav className='flex items-center justify-between max-w-7xl mx-auto px-4 py-3.5 text-slate-800 transition-all'>
-            <Link to='/'>
-                <img src={logo} alt="logo" className="h-11 w-auto" />
+            <Link to='/' className="flex items-center gap-2">
+                <div className="text-[#ec5b13]">
+                    <FileText size={40} strokeWidth={1.5} />
+                </div>
+                <div className="text-2xl font-black tracking-tight text-slate-900">
+                    Resume<span className="text-[#ec5b13]">Lab</span>
+                </div>
             </Link>
             <div className='flex items-center gap-4 text-sm'>
                 <p className='max-sm:hidden'>Hi, {user?.name}</p>
