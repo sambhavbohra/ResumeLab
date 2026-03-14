@@ -2,7 +2,7 @@ import User from "../models/user.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import Resume from "../models/Resume.js";
-import Otp from "../models/Otp.js";
+import redis from "../configs/redis.js";
 import { sendOtpEmail } from "../configs/nodemailer.js";
 import { OAuth2Client } from "google-auth-library";
 
@@ -42,14 +42,11 @@ export const sendOtp = async (req, res) => {
             }
         }
 
-        // Delete any existing OTP for this email
-        await Otp.deleteMany({ email });
-
         // Generate new OTP
         const otp = generateOtp();
 
-        // Save OTP to database
-        await Otp.create({ email, otp });
+        // Save OTP to Redis with 10-minute expiration (600 seconds)
+        await redis.set(`otp:${email}`, otp, 'EX', 600);
 
         // Send OTP via email (with timeouts configured in nodemailer)
         await sendOtpEmail(email, otp);
@@ -72,14 +69,15 @@ export const verifyOtp = async (req, res) => {
             return res.status(400).json({ message: 'Email and OTP are required' });
         }
 
-        // Find OTP record
-        const otpRecord = await Otp.findOne({ email, otp });
-        if (!otpRecord) {
+        // Find OTP record in Redis
+        const storedOtp = await redis.get(`otp:${email}`);
+        
+        if (!storedOtp || storedOtp !== otp) {
             return res.status(400).json({ message: 'Invalid or expired OTP' });
         }
 
-        // OTP is valid - delete it
-        await Otp.deleteMany({ email });
+        // OTP is valid - delete it from Redis
+        await redis.del(`otp:${email}`);
 
         // Generate a temporary token valid for 15 minutes for registration
         const registrationToken = jwt.sign({ email, verified: true }, process.env.JWT_SECRET, { expiresIn: '15m' });
