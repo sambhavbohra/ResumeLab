@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Linkedin, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Globe, ExternalLink } from "lucide-react";
 
 const ClassicTemplate = ({ data, accentColor }) => {
     const formatDate = (dateStr) => {
@@ -103,7 +103,14 @@ const ClassicTemplate = ({ data, accentColor }) => {
                         {data.project.map((proj, index) => (
                             <div key={index} className="flex justify-between items-start border-l-3 border-gray-300 pl-6">
                                 <div>
-                                    <li className="font-semibold text-gray-800 ">{proj.name}</li>
+                                    <div className="flex items-center gap-2">
+                                        <li className="font-semibold text-gray-800 ">{proj.name}</li>
+                                        {proj.link && (
+                                            <a href={proj.link} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-600 transition-colors">
+                                                <ExternalLink className="size-3" />
+                                            </a>
+                                        )}
+                                    </div>
                                     <p className="text-gray-600">{proj.description}</p>
                                 </div>
                             </div>
@@ -139,18 +146,30 @@ const ClassicTemplate = ({ data, accentColor }) => {
             )}
 
             {/* Skills */}
-            {data.skills && data.skills.length > 0 && (
+            {data.skills && data.skills.filter(s => (s && typeof s === 'object' && s.category) || (typeof s === 'string' && s.trim())).length > 0 && (
                 <section className="mb-6">
                     <h2 className="text-xl font-semibold mb-4" style={{ color: accentColor }}>
                         CORE SKILLS
                     </h2>
 
-                    <div className="flex gap-4 flex-wrap">
-                        {data.skills.map((skill, index) => (
-                            <div key={index} className="text-gray-700">
-                                • {skill}
-                            </div>
-                        ))}
+                    <div className="space-y-2">
+                        {data.skills.map((skill, index) => {
+                            if (skill && typeof skill === 'object' && skill.category) {
+                                return (
+                                    <div key={index} className="text-gray-700 text-sm">
+                                        <span className="font-bold">{skill.category}:</span> {(skill.items || []).join(', ')}
+                                    </div>
+                                );
+                            }
+                            if (typeof skill === 'string' && skill.trim()) {
+                                return (
+                                    <div key={index} className="text-gray-700 text-sm italic">
+                                        • {skill}
+                                    </div>
+                                );
+                            }
+                            return null;
+                        })}
                     </div>
                 </section>
             )}

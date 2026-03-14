@@ -53,14 +53,7 @@ const PersonalInfoForm = ({data, onChange, removeBackground, setRemoveBackground
               </div>
           )}
         </div>
-      ) : (
-        <div className='mt-4 p-3 rounded-lg bg-gray-50 border border-gray-200'>
-          <div className='flex items-center gap-2 text-sm text-gray-500'>
-            <ImageIcon className='size-4'/>
-            <span>Photo not required for this template. Select "Minimal Image" template to add a photo.</span>
-          </div>
-        </div>
-      )}
+      ) : null}
 
     {fields.map((field)=>{
         const Icon = field.icon;

@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 
 const MinimalTemplate = ({ data, accentColor }) => {
     const formatDate = (dateStr) => {
@@ -77,7 +78,14 @@ const MinimalTemplate = ({ data, accentColor }) => {
                     <div className="space-y-4">
                         {data.project.map((proj, index) => (
                             <div key={index} className="flex flex-col gap-2 justify-between items-baseline">
-                                <h3 className="text-lg font-medium ">{proj.name}</h3>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="text-lg font-medium ">{proj.name}</h3>
+                                    {proj.link && (
+                                        <a href={proj.link} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-600 transition-colors">
+                                            <ExternalLink className="size-4" />
+                                        </a>
+                                    )}
+                                </div>
                                 <p className="text-gray-600">{proj.description}</p>
                             </div>
                         ))}
@@ -112,14 +120,30 @@ const MinimalTemplate = ({ data, accentColor }) => {
             )}
 
             {/* Skills */}
-            {data.skills && data.skills.length > 0 && (
+            {data.skills && data.skills.filter(s => (s && typeof s === 'object' && s.category) || (typeof s === 'string' && s.trim())).length > 0 && (
                 <section>
                     <h2 className="text-sm uppercase tracking-widest mb-6 font-medium" style={{ color: accentColor }}>
                         Skills
                     </h2>
 
-                    <div className="text-gray-700">
-                        {data.skills.join(" • ")}
+                    <div className="space-y-1 text-gray-700">
+                        {data.skills.map((skill, index) => {
+                            if (skill && typeof skill === 'object' && skill.category) {
+                                return (
+                                    <div key={index} className="text-[10pt]">
+                                        <span className="font-bold">{skill.category}:</span> {(skill.items || []).join(', ')}
+                                    </div>
+                                );
+                            }
+                            if (typeof skill === 'string' && skill.trim()) {
+                                return (
+                                    <div key={index} className="text-[10pt] italic">
+                                        • {skill}
+                                    </div>
+                                );
+                            }
+                            return null;
+                        })}
                     </div>
                 </section>
             )}

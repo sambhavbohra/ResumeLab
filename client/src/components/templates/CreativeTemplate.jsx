@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Linkedin, Globe, Github } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Globe, User, Briefcase, Rocket, GraduationCap, Zap, ExternalLink } from "lucide-react";
 
 const CreativeTemplate = ({ data, accentColor }) => {
     const formatDate = (dateStr) => {
@@ -64,7 +64,7 @@ const CreativeTemplate = ({ data, accentColor }) => {
                 {data.professional_summary && (
                     <section className="mb-5">
                         <h2 className="text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <span>👋</span>
+                            <User className="size-4" style={{ color: accentColor }} />
                             <span style={{ color: accentColor }}>About Me</span>
                         </h2>
                         <p className="text-gray-700 text-sm leading-relaxed">
@@ -77,7 +77,7 @@ const CreativeTemplate = ({ data, accentColor }) => {
                 {data.experience && data.experience.length > 0 && (
                     <section className="mb-5">
                         <h2 className="text-sm font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
-                            <span>💼</span>
+                            <Briefcase className="size-4" style={{ color: accentColor }} />
                             <span style={{ color: accentColor }}>Experience</span>
                         </h2>
 
@@ -109,7 +109,7 @@ const CreativeTemplate = ({ data, accentColor }) => {
                 {data.project && data.project.length > 0 && (
                     <section className="mb-5">
                         <h2 className="text-sm font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
-                            <span>🚀</span>
+                            <Rocket className="size-4" style={{ color: accentColor }} />
                             <span style={{ color: accentColor }}>Projects</span>
                         </h2>
 
@@ -119,7 +119,14 @@ const CreativeTemplate = ({ data, accentColor }) => {
                                     key={index} 
                                     className="p-3 rounded-lg border border-gray-200 bg-gray-50/50 hover:bg-gray-50 transition-colors"
                                 >
-                                    <h3 className="font-semibold text-gray-900 mb-1">{proj.name}</h3>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <h3 className="font-semibold text-gray-900">{proj.name}</h3>
+                                        {proj.link && (
+                                            <a href={proj.link} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-600 transition-colors">
+                                                <ExternalLink className="size-3" />
+                                            </a>
+                                        )}
+                                    </div>
                                     {proj.description && (
                                         <p className="text-gray-600 text-sm leading-relaxed">
                                             {proj.description}
@@ -137,7 +144,7 @@ const CreativeTemplate = ({ data, accentColor }) => {
                     {data.education && data.education.length > 0 && (
                         <section>
                             <h2 className="text-sm font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
-                                <span>🎓</span>
+                                <GraduationCap className="size-4" style={{ color: accentColor }} />
                                 <span style={{ color: accentColor }}>Education</span>
                             </h2>
 
@@ -159,27 +166,54 @@ const CreativeTemplate = ({ data, accentColor }) => {
                     )}
 
                     {/* Skills */}
-                    {data.skills && data.skills.length > 0 && (
+                    {data.skills && data.skills.filter(s => (s && typeof s === 'object' && s.category) || (typeof s === 'string' && s.trim())).length > 0 && (
                         <section>
                             <h2 className="text-sm font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
-                                <span>⚡</span>
+                                <Zap className="size-4" style={{ color: accentColor }} />
                                 <span style={{ color: accentColor }}>Skills</span>
                             </h2>
 
-                            <div className="flex flex-wrap gap-1.5">
-                                {data.skills.map((skill, index) => (
-                                    <span
-                                        key={index}
-                                        className="px-2 py-1 text-xs font-medium rounded-md border"
-                                        style={{ 
-                                            borderColor: accentColor,
-                                            color: accentColor,
-                                            backgroundColor: `${accentColor}10`
-                                        }}
-                                    >
-                                        {skill}
-                                    </span>
-                                ))}
+                            <div className="space-y-3">
+                                {data.skills.map((skill, index) => {
+                                    if (skill && typeof skill === 'object' && skill.category) {
+                                        return (
+                                            <div key={index}>
+                                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">{skill.category}</h4>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {(skill.items || []).map((item, i) => (
+                                                        <span
+                                                            key={i}
+                                                            className="px-2 py-0.5 text-[11px] font-semibold rounded-lg border shadow-sm transition-transform hover:scale-105"
+                                                            style={{ 
+                                                                borderColor: accentColor,
+                                                                color: accentColor,
+                                                                backgroundColor: `${accentColor}08`
+                                                            }}
+                                                        >
+                                                            {item}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                    if (typeof skill === 'string' && skill.trim()) {
+                                        return (
+                                            <span
+                                                key={index}
+                                                className="px-2 py-0.5 text-[11px] font-semibold rounded-lg border shadow-sm inline-block mr-1.5 mb-1.5"
+                                                style={{ 
+                                                    borderColor: accentColor,
+                                                    color: accentColor,
+                                                    backgroundColor: `${accentColor}08`
+                                                }}
+                                            >
+                                                {skill}
+                                            </span>
+                                        );
+                                    }
+                                    return null;
+                                })}
                             </div>
                         </section>
                     )}

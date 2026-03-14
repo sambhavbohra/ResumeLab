@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
 
 const MinimalImageTemplate = ({ data, accentColor }) => {
     const formatDate = (dateStr) => {
@@ -91,16 +91,27 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                     )}
 
                     {/* Skills */}
-                    {data.skills && data.skills.length > 0 && (
+                    {data.skills && data.skills.filter(s => (s && typeof s === 'object' && s.category) || (typeof s === 'string' && s.trim())).length > 0 && (
                         <section>
                             <h2 className="text-sm font-semibold tracking-widest text-zinc-600 mb-3">
                                 SKILLS
                             </h2>
-                            <ul className="space-y-1 text-sm">
-                                {data.skills.map((skill, index) => (
-                                    <li key={index}>{skill}</li>
-                                ))}
-                            </ul>
+                            <div className="space-y-3 text-sm">
+                                {data.skills.map((skill, index) => {
+                                    if (skill && typeof skill === 'object' && skill.category) {
+                                        return (
+                                            <div key={index}>
+                                                <p className="font-bold uppercase text-[10px] text-zinc-500 mb-1">{skill.category}</p>
+                                                <p className="leading-relaxed">{(skill.items || []).join(', ')}</p>
+                                            </div>
+                                        );
+                                    }
+                                    if (typeof skill === 'string' && skill.trim()) {
+                                        return <p key={index} className="italic">• {skill}</p>;
+                                    }
+                                    return null;
+                                })}
+                            </div>
                         </section>
                     )}
                 </aside>
@@ -163,7 +174,14 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                             <div className="space-y-4">
                                 {data.project.map((project, index) => (
                                     <div key={index}>
-                                        <h3 className="text-md font-medium text-zinc-800 mt-3">{project.name}</h3>
+                                        <div className="flex items-center gap-2 mt-3">
+                                            <h3 className="text-md font-medium text-zinc-800">{project.name}</h3>
+                                            {project.link && (
+                                                <a href={project.link} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-600 transition-colors">
+                                                    <ExternalLink className="size-3" />
+                                                </a>
+                                            )}
+                                        </div>
                                         <p className="text-sm mb-1" style={{ color: accentColor }} >
                                             {project.type}
                                         </p>

@@ -9,13 +9,11 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
             id: "classic",
             name: "Classic",
             preview: "A clean, traditional resume format with clear sections and professional typography",
-            hasPhoto: false
         },
         {
             id: "modern",
             name: "Modern",
             preview: "Sleek design with strategic use of color and modern font choices",
-            hasPhoto: false
         },
         {
             id: "minimal-image",
@@ -27,13 +25,16 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
             id: "minimal",
             name: "Minimal",
             preview: "Ultra-clean design that puts your content front and center",
-            hasPhoto: false
         },
         {
             id: "creative",
             name: "Creative",
             preview: "Fun, emoji-styled headers with a compact professional layout",
-            hasPhoto: false
+        },
+        {
+            id: "latex",
+            name: "Latex Resume",
+            preview: "A professional, academic-style layout inspired by classic LaTeX resume templates",
         },
     ]
   return (

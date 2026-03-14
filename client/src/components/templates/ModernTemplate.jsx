@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Linkedin, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Globe, ExternalLink } from "lucide-react";
 
 const ModernTemplate = ({ data, accentColor }) => {
 	const formatDate = (dateStr) => {
@@ -107,8 +107,13 @@ const ModernTemplate = ({ data, accentColor }) => {
 
 
 									<div className="flex justify-between items-start">
-										<div>
+										<div className="flex items-center gap-2">
 											<h3 className="text-lg font-medium text-gray-900">{p.name}</h3>
+											{p.link && (
+												<a href={p.link} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-600 transition-colors">
+													<ExternalLink className="size-4" />
+												</a>
+											)}
 										</div>
 									</div>
 									{p.description && (
@@ -148,22 +153,37 @@ const ModernTemplate = ({ data, accentColor }) => {
 					)}
 
 					{/* Skills */}
-					{data.skills && data.skills.length > 0 && (
+					{data.skills && data.skills.filter(s => (s && typeof s === 'object' && s.category) || (typeof s === 'string' && s.trim())).length > 0 && (
 						<section>
 							<h2 className="text-2xl font-light mb-4 pb-2 border-b border-gray-200">
 								Skills
 							</h2>
 
-							<div className="flex flex-wrap gap-2">
-								{data.skills.map((skill, index) => (
-									<span
-										key={index}
-										className="px-3 py-1 text-sm text-white rounded-full"
-										style={{ backgroundColor: accentColor }}
-									>
-										{skill}
-									</span>
-								))}
+							<div className="space-y-3">
+								{data.skills.map((skill, index) => {
+									if (skill && typeof skill === 'object' && skill.category) {
+										return (
+											<div key={index} className="text-sm">
+												<span className="font-semibold text-gray-900">{skill.category}:</span>
+												<div className="flex flex-wrap gap-1.5 mt-1.5">
+													{(skill.items || []).map((item, i) => (
+														<span key={i} className="px-2 py-0.5 text-white rounded text-[10px]" style={{ backgroundColor: accentColor }}>
+															{item}
+														</span>
+													))}
+												</div>
+											</div>
+										);
+									}
+									if (typeof skill === 'string' && skill.trim()) {
+										return (
+											<span key={index} className="px-3 py-1 text-sm text-white rounded-full inline-block mr-2 mt-2" style={{ backgroundColor: accentColor }}>
+												{skill}
+											</span>
+										);
+									}
+									return null;
+								})}
 							</div>
 						</section>
 					)}

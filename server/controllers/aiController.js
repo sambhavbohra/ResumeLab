@@ -130,7 +130,8 @@ export const uploadResume = async (req, res) => {
                 {
                     "name": "project name",
                     "type": "project type",
-                    "description": "project description"
+                    "description": "project description",
+                    "link": "project url or empty string"
                 }
             ],
             "education": [

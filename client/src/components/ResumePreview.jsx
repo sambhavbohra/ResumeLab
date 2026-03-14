@@ -4,6 +4,7 @@ import ModernTemplate from './templates/ModernTemplate'
 import MinimalTemplate from './templates/MinimalTemplate'
 import MinimalImageTemplate from './templates/MinimalImageTemplate'
 import CreativeTemplate from './templates/CreativeTemplate'
+import LatexTemplate from './templates/LatexTemplate'
 
 const ResumePreview = ({data, template, accentColor, classes = ""}) => {
     const resumeRef = useRef(null);
@@ -68,6 +69,8 @@ const ResumePreview = ({data, template, accentColor, classes = ""}) => {
                 return <MinimalImageTemplate data={data} accentColor={accentColor}/>;
             case "creative":
                 return <CreativeTemplate data={data} accentColor={accentColor}/>;
+            case "latex":
+                return <LatexTemplate data={data} accentColor={accentColor}/>;
 
             default:
                 return <ClassicTemplate data={data} accentColor={accentColor}/>;

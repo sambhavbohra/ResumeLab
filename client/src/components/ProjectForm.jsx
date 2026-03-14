@@ -1,69 +1,279 @@
-import { Plus, Trash2 } from 'lucide-react';
-import React from 'react'
+import { Plus, Trash2, ChevronUp, ChevronDown, GripVertical, Pencil, Check, AlertCircle, Sparkles, Loader2 } from 'lucide-react';
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
+import api from '../configs/api'
+import toast from 'react-hot-toast'
+import getErrorMessage from '../utils/errorHandler'
 
 const ProjectForm = ({ data, onChange }) => {
+    const { token } = useSelector(state => state.auth)
+    const [expandedIndex, setExpandedIndex] = useState(data.length > 0 ? 0 : null);
+    const [projectToDelete, setProjectToDelete] = useState(null);
+    const [generatingIndex, setGeneratingIndex] = useState(-1);
 
-const addProject = () =>{
-    const newProject = {
-        name: "",
-        type: "",
-        description: "",
-    };
-    onChange([...data, newProject])
-}
+    const addProject = () => {
+        const newProject = {
+            name: "",
+            type: "",
+            description: "",
+            link: "",
+        };
+        const updated = [...data, newProject];
+        onChange(updated);
+        setExpandedIndex(updated.length - 1); // Expand the new project
+    }
 
-const removeProject = (index)=>{
-    const updated = data.filter((_, i)=> i !== index);
-    onChange(updated)
-}
+    const confirmDelete = (index) => {
+        const updated = data.filter((_, i) => i !== index);
+        onChange(updated);
+        setProjectToDelete(null);
+        if (expandedIndex === index) setExpandedIndex(null);
+        else if (expandedIndex > index) setExpandedIndex(expandedIndex - 1);
+    }
 
-const updateProject = (index, field, value)=>{
-    const updated = [...data];
-    updated[index] = {...updated[index], [field]: value}
-    onChange(updated)
-}
+    const updateProject = (index, field, value) => {
+        const updated = [...data];
+        updated[index] = { ...updated[index], [field]: value }
+        onChange(updated)
+    }
 
-  return (
-    <div>
-      <div className='flex items-center justify-between'>
-        <div>
-            <h3 className='flex items-center gap-2 text-lg font-semibold text-gray-900'> Projects </h3>
-            <p className='text-sm text-gray-500'>Add your projects</p>
-        </div>
-        <button onClick={addProject} className='flex items-center gap-2 px-3 py-1 text-sm rounded-lg transition-colors' style={{ backgroundColor: 'var(--gradientend)', color: 'var(--textdark)' }}>
-            <Plus className="size-4"/>
-            Add Project
-        </button>
-      </div>
+    const moveProject = (e, index, direction) => {
+        e.stopPropagation();
+        if (direction === 'up' && index === 0) return;
+        if (direction === 'down' && index === data.length - 1) return;
 
-      
-        <div className='space-y-4 mt-6'>
-            {data.map((project, index)=>(
-                <div key={index} className="p-4 border border-gray-200 rounded-lg space-y-3">
-                    <div className='flex justify-between items-start'>
-                        <h4>Project #{index + 1}</h4>
-                        <button onClick={()=> removeProject(index)} className='text-red-500 hover:text-red-700 transition-colors'>
-                            <Trash2 className="size-4"/>
-                        </button>
+        const updated = [...data];
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+        [updated[index], updated[targetIndex]] = [updated[targetIndex], updated[index]];
+        onChange(updated);
+        
+        if (expandedIndex === index) setExpandedIndex(targetIndex);
+        else if (expandedIndex === targetIndex) setExpandedIndex(index);
+    }
+
+    const toggleExpand = (index) => {
+        setExpandedIndex(expandedIndex === index ? null : index);
+    }
+
+    const generateProjectDescription = async (index) => {
+        setGeneratingIndex(index)
+        const project = data[index]
+        const prompt = `enhance this project description ${project.description} for a project titled "${project.name}" (Type: ${project.type}). Focus on technical implementation, impact, and results.`
+
+        try {
+            const { data: res } = await api.post('/api/ai/enhance-job-desc', { userContent: prompt }, { headers: { Authorization: token } })
+            updateProject(index, "description", res.enhancedContent)
+        } catch (error) {
+            toast.error(getErrorMessage(error))
+        } finally {
+            setGeneratingIndex(-1)
+        }
+    }
+
+    return (
+        <div className="relative space-y-6">
+            {/* Custom Delete Confirmation Modal */}
+            {projectToDelete !== null && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="flex flex-col items-center text-center">
+                            <div className="size-14 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                                <AlertCircle className="size-8 text-red-600" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Delete Project?</h3>
+                            <p className="text-gray-500 mb-6">
+                                This will permanently remove <span className="font-semibold text-gray-700">"{data[projectToDelete]?.name || "this project"}"</span>. This action cannot be undone.
+                            </p>
+                            <div className="flex gap-3 w-full">
+                                <button
+                                    onClick={() => setProjectToDelete(null)}
+                                    className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={() => confirmDelete(projectToDelete)}
+                                    className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 shadow-lg shadow-red-200 transition-all active:scale-95"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
                     </div>
-
-                    <div className='grid gap-3'>
-
-                        <input value={project.name || ""} onChange={(e)=>updateProject(index, "name", e.target.value)} type="text" placeholder="Project Name" className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors"/>
-
-                        <input value={project.type || ""} onChange={(e)=>updateProject(index, "type", e.target.value)} type="text" placeholder="Project Type" className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors"/>
-
-                        <textarea rows={4} value={project.description || ""} onChange={(e)=>updateProject(index, "description", e.target.value)} placeholder="Describe your project..." className="w-full px-3 py-2 text-sm rounded-lg resize-none border border-gray-300 focus:border-[var(--textdark)] focus:ring-1 focus:ring-[var(--textdark)] outline-none transition-colors"/>
-            
-                    </div>
-
-
                 </div>
-            ))}
+            )}
+
+            <div className='flex items-center justify-between'>
+                <div>
+                    <h3 className='flex items-center gap-2 text-xl font-bold text-gray-900'>Projects</h3>
+                    <p className='text-sm text-gray-500'>Highlight your best work</p>
+                </div>
+                <button
+                    onClick={addProject}
+                    className='group flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-full transition-all duration-300 shadow-md hover:shadow-lg active:scale-95'
+                    style={{ backgroundColor: 'var(--textdark)', color: 'white' }}
+                >
+                    <Plus className="size-4 group-hover:rotate-90 transition-transform" />
+                    <span>New Project</span>
+                </button>
+            </div>
+
+            <div className='space-y-3'>
+                {data.map((project, index) => {
+                    const isExpanded = expandedIndex === index;
+                    return (
+                        <div
+                            key={index}
+                            className={`group border rounded-xl overflow-hidden transition-all duration-300 shadow-sm ${
+                                isExpanded 
+                                ? "border-[var(--textdark)] bg-white ring-1 ring-[var(--textdark)]/10" 
+                                : "border-gray-200 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                            }`}
+                        >
+                            {/* Card Header */}
+                            <div 
+                                onClick={() => toggleExpand(index)}
+                                className={`flex items-center p-3 cursor-pointer ${isExpanded ? "bg-gray-50/80 border-b border-gray-100" : ""}`}
+                            >
+                                <div className="flex-shrink-0 mr-3 text-gray-400 group-hover:text-gray-600 transition-colors">
+                                    <GripVertical className="size-5" />
+                                </div>
+                                
+                                <div className="flex-grow min-w-0">
+                                    <h4 className={`font-bold truncate text-sm sm:text-base ${isExpanded ? "text-[var(--textdark)]" : "text-gray-700"}`}>
+                                        {project.name || `Unnamed Project #${index + 1}`}
+                                    </h4>
+                                    {!isExpanded && project.type && (
+                                        <p className="text-xs text-gray-400 truncate">{project.type}</p>
+                                    )}
+                                </div>
+
+                                <div className="flex items-center gap-1 sm:gap-2 ml-2">
+                                    {/* Order Buttons with Colors */}
+                                    <div className="flex bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shadow-inner">
+                                        <button
+                                            onClick={(e) => moveProject(e, index, 'up')}
+                                            disabled={index === 0}
+                                            className="p-1.5 hover:bg-blue-50 text-blue-600 disabled:opacity-20 transition-all active:scale-90"
+                                            title="Move Up"
+                                        >
+                                            <ChevronUp className="size-4" strokeWidth={3} />
+                                        </button>
+                                        <div className="w-[1px] bg-gray-200" />
+                                        <button
+                                            onClick={(e) => moveProject(e, index, 'down')}
+                                            disabled={index === data.length - 1}
+                                            className="p-1.5 hover:bg-orange-50 text-orange-600 disabled:opacity-20 transition-all active:scale-90"
+                                            title="Move Down"
+                                        >
+                                            <ChevronDown className="size-4" strokeWidth={3} />
+                                        </button>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <button 
+                                        className={`p-1.5 rounded-lg transition-all ${isExpanded ? "bg-green-100 text-green-600" : "text-gray-400 hover:text-blue-600 hover:bg-blue-50"}`}
+                                    >
+                                        {isExpanded ? <Check className="size-4" /> : <Pencil className="size-4" />}
+                                    </button>
+                                    
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setProjectToDelete(index); }}
+                                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                                    >
+                                        <Trash2 className="size-4" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Card Content */}
+                            <div className={`transition-all duration-300 ease-in-out ${isExpanded ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}>
+                                <div className="p-4 space-y-4 bg-white">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Project Title</label>
+                                            <input
+                                                value={project.name || ""}
+                                                onChange={(e) => updateProject(index, "name", e.target.value)}
+                                                type="text"
+                                                placeholder="e.g. Portfolio Website"
+                                                className="w-full px-4 py-2.5 text-sm rounded-xl border border-gray-200 focus:border-[var(--textdark)] focus:ring-4 focus:ring-[var(--textdark)]/5 outline-none transition-all"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Category / Type</label>
+                                            <input
+                                                value={project.type || ""}
+                                                onChange={(e) => updateProject(index, "type", e.target.value)}
+                                                type="text"
+                                                placeholder="e.g. FullStack, Research"
+                                                className="w-full px-4 py-2.5 text-sm rounded-xl border border-gray-200 focus:border-[var(--textdark)] focus:ring-4 focus:ring-[var(--textdark)]/5 outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Project Link (Optional)</label>
+                                        <input
+                                            value={project.link || ""}
+                                            onChange={(e) => updateProject(index, "link", e.target.value)}
+                                            type="url"
+                                            placeholder="https://your-project.com"
+                                            className="w-full px-4 py-2.5 text-sm rounded-xl border border-gray-200 focus:border-[var(--textdark)] focus:ring-4 focus:ring-[var(--textdark)]/5 outline-none transition-all"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <div className='flex items-center justify-between'>
+                                            <label className='text-xs font-bold text-gray-500 uppercase tracking-wider ml-1'>Description</label>
+                                            <button 
+                                                onClick={() => generateProjectDescription(index)} 
+                                                disabled={generatingIndex === index || !project.name} 
+                                                className='group relative flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden hover:shadow shadow-sm border border-[var(--gradientend)] bg-[var(--gradientend)] text-[var(--textdark)] active:scale-95'
+                                            >
+                                                {generatingIndex === index ? (
+                                                    <Loader2 className="w-3.5 h-3.5 animate-spin relative z-10"/>
+                                                ): (
+                                                    <Sparkles className='w-3.5 h-3.5 relative z-10 group-hover:scale-110 transition-transform text-amber-600'/>
+                                                )}
+                                                <span className='relative z-10'>AI Enhance</span>
+                                            </button>
+                                        </div>
+                                        <textarea
+                                            rows={5}
+                                            value={project.description || ""}
+                                            onChange={(e) => updateProject(index, "description", e.target.value)}
+                                            placeholder="What did you build? What technologies did you use?"
+                                            className="w-full px-4 py-2.5 text-sm rounded-xl resize-none border border-gray-200 focus:border-[var(--textdark)] focus:ring-4 focus:ring-[var(--textdark)]/5 outline-none transition-all shadow-inner"
+                                        />
+                                    </div>
+                                    
+                                    <div className="flex justify-end pt-2">
+                                        <button 
+                                            onClick={() => setExpandedIndex(null)}
+                                            className="px-4 py-2 text-xs font-bold bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm active:scale-95"
+                                        >
+                                            Save & Close
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {data.length === 0 && (
+                <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50">
+                    <div className="inline-flex items-center justify-center p-4 bg-white rounded-full shadow-sm mb-3">
+                        <Plus className="size-6 text-gray-300" />
+                    </div>
+                    <p className="text-gray-500 font-medium">No projects added yet.</p>
+                    <button onClick={addProject} className="mt-2 text-[var(--textdark)] text-sm font-bold hover:underline">Add your first project</button>
+                </div>
+            )}
         </div>
-     
-    </div>
-  )
+    )
 }
 
 export default ProjectForm
