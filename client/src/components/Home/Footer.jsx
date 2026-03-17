@@ -22,7 +22,7 @@ const Footer = () => {
                             <li><a className="hover:text-[#ec5b13] transition-colors" href="#">Resume Builder</a></li>
                             <li><a className="hover:text-[#ec5b13] transition-colors" href="#">Cover Letter Creator</a></li>
                             <li><a className="hover:text-[#ec5b13] transition-colors" href="#">AI Content Writer</a></li>
-                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">ATS Checker</a></li>
+                            <li><Link className="hover:text-[#ec5b13] transition-colors" to="/app/ats-checker">ATS Checker</Link></li>
                         </ul>
                     </div>
                     <div>

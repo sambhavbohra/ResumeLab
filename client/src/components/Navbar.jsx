@@ -56,8 +56,10 @@ const Navbar = () => {
                     Resume<span className="text-[#ec5b13]">Lab</span>
                 </div>
             </Link>
-            <div className='flex items-center gap-4 text-sm'>
-                <p className='max-sm:hidden'>Hi, {user?.name}</p>
+            <div className='flex items-center gap-6 text-sm font-semibold'>
+                <Link to='/app/ats-checker' className='hover:text-[#ec5b13] transition-colors'>ATS Checker</Link>
+                <Link to='/app' className='hover:text-[#ec5b13] transition-colors'>Dashboard</Link>
+                <p className='max-sm:hidden text-slate-400'>Hi, {user?.name}</p>
                 <div className="rainbow relative z-0 bg-white/15 overflow-hidden p-0.5 flex items-center justify-center rounded-full hover:scale-105 transition duration-300 active:scale-100">
                     <button onClick={logoutUser} className="px-8 text-sm py-3 text-white rounded-full font-medium bg-gray-900/80 backdrop-blur">
                         Logout

@@ -29,9 +29,9 @@ const Features = () => {
                         <div className="w-14 h-14 rounded-2xl bg-[#14b8a6]/10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
                             <span className="material-symbols-outlined text-[#14b8a6] text-3xl">psychology</span>
                         </div>
-                        <h4 className="text-xl font-bold mb-4">AI Content Analysis</h4>
+                        <h4 className="text-xl font-bold mb-4">AI & ATS Analysis</h4>
                         <p className="text-slate-600 leading-relaxed">
-                            Smart suggestions powered by LLMs to optimize your bullet points and impact statements for modern ATS systems.
+                            Smart suggestions and a full ATS Compatibility Checker powered by AI to ensure your resume beats the bots and reaches the hiring manager.
                         </p>
                     </div>
                     {/* Feature 3 */}

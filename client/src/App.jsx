@@ -9,6 +9,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import ResetPassword from './pages/ResetPassword'
 import HelpCenter from './pages/HelpCenter'
+import ATSChecker from './pages/ATSChecker'
 import { useDispatch } from 'react-redux'
 import api from './configs/api'
 import { login, setLoading } from './app/features/authSlice'
@@ -53,6 +54,7 @@ const App = () => {
         <Route path='app' element={<Layout />}>
           <Route index element={<Dashboard />}/>
           <Route path='builder/:resumeId' element={<ResumeBuilder />}/>
+          <Route path='ats-checker' element={<ATSChecker />}/>
         </Route>
 
         <Route path='view/:resumeId' element={<Preview />}/>

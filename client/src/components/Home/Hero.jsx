@@ -16,9 +16,8 @@ const Hero = () => {
                         <h2 className="text-xl font-extrabold tracking-tight">Resume<span className="text-[#ec5b13]">Lab</span></h2>
                     </Link>
                     <div className="hidden md:flex items-center gap-10">
-                        <a className="text-sm font-semibold hover:text-[#ec5b13] transition-colors" href="#features">Templates</a>
+                        <Link className="text-sm font-semibold hover:text-[#ec5b13] transition-colors" to="/app/ats-checker">ATS Checker</Link>
                         <a className="text-sm font-semibold hover:text-[#ec5b13] transition-colors" href="#features">AI Features</a>
-                        <Link className="text-sm font-semibold hover:text-[#ec5b13] transition-colors" to="/register">Pricing</Link>
                         <Link className="text-sm font-semibold hover:text-[#ec5b13] transition-colors" to="/help-center">Help Center</Link>
                     </div>
                     <div className="flex items-center gap-4">
