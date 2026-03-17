@@ -8,6 +8,7 @@ import Preview from './pages/Preview'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import ResetPassword from './pages/ResetPassword'
+import HelpCenter from './pages/HelpCenter'
 import { useDispatch } from 'react-redux'
 import api from './configs/api'
 import { login, setLoading } from './app/features/authSlice'
@@ -47,6 +48,7 @@ const App = () => {
         <Route path='/login' element={<Login />}/>
         <Route path='/register' element={<Register />}/>
         <Route path='/reset-password' element={<ResetPassword />}/>
+        <Route path='/help-center' element={<HelpCenter />}/>
 
         <Route path='app' element={<Layout />}>
           <Route index element={<Dashboard />}/>

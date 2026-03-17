@@ -50,10 +50,8 @@ const Navbar = () => {
             }
         `}</style>
         <nav className='flex items-center justify-between max-w-7xl mx-auto px-4 py-3.5 text-slate-800 transition-all'>
-            <Link to='/' className="flex items-center gap-2">
-                <div className="text-[#ec5b13]">
-                    <FileText size={40} strokeWidth={1.5} />
-                </div>
+            <Link to='/' className="flex items-center gap-3">
+                <img src="/favicon.svg" alt="ResumeLab Logo" className="h-10 w-10" />
                 <div className="text-2xl font-black tracking-tight text-slate-900">
                     Resume<span className="text-[#ec5b13]">Lab</span>
                 </div>

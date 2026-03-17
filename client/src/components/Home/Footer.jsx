@@ -1,34 +1,60 @@
 import React from 'react'
 import { FileText } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const Footer = () => {
-  return (
-    <div>
-         <footer className="w-full text-white" style={{ background: `linear-gradient(to bottom, var(--textlight), var(--background))` }}>
-            <div className="max-w-7xl mx-auto px-6 py-16 flex flex-col items-center">
-                <div className="flex items-center space-x-3 mb-6">
-                    <div className="flex items-center gap-2">
-                        <div className="text-white">
-                            <FileText size={40} strokeWidth={1.5} />
+    return (
+        <footer className="py-16 border-t border-slate-200">
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="grid md:grid-cols-4 gap-12 mb-16">
+                    <div className="col-span-1 md:col-span-1">
+                        <div className="flex items-center gap-3 mb-6">
+                            <img src="/favicon.svg" alt="ResumeLab Logo" className="h-8 w-8" />
+                            <h2 className="text-lg font-extrabold tracking-tight">Resume<span className="text-[#ec5b13]">Lab</span></h2>
                         </div>
-                        <div className="text-2xl font-black tracking-tight text-white">
-                            Resume<span className="text-white/80">Lab</span>
-                        </div>
+                        <p className="text-sm text-slate-500 leading-relaxed">
+                            The world's most advanced resume builder for modern professionals. Powered by AI, designed for impact.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 className="font-bold mb-6">Product</h4>
+                        <ul className="space-y-4 text-sm text-slate-500">
+                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">Resume Builder</a></li>
+                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">Cover Letter Creator</a></li>
+                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">AI Content Writer</a></li>
+                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">ATS Checker</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 className="font-bold mb-6">Company</h4>
+                        <ul className="space-y-4 text-sm text-slate-500">
+                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">About Us</a></li>
+                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">Careers</a></li>
+                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">Contact</a></li>
+                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 className="font-bold mb-6">Support</h4>
+                        <ul className="space-y-4 text-sm text-slate-500">
+                            <li><Link className="hover:text-[#ec5b13] transition-colors" to="/help-center">Help Center</Link></li>
+                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">Resume Guides</a></li>
+                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">Expert Reviews</a></li>
+                            <li><a className="hover:text-[#ec5b13] transition-colors" href="#">API Access</a></li>
+                        </ul>
                     </div>
                 </div>
-                <p className="text-center max-w-xl text-sm font-normal leading-relaxed">
-                    Create stunning, ATS-friendly resumes in minutes. ResumeLab empowers job seekers with intelligent templates, 
-                    live preview, and professional formatting to land your dream job.
-                </p>
-            </div>
-            <div className="border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}>
-                <div className="max-w-7xl mx-auto px-6 py-6 text-center text-sm font-normal">
-                    <a href="/" className="hover:opacity-80 transition">ResumeLab</a> ©2025. Project rights reserved.
+                <div className="pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+                    <p>© 2024 ResumeLab. All rights reserved.</p>
+                    <div className="flex gap-6">
+                        <a className="hover:text-[#ec5b13] transition-colors" href="#">Twitter</a>
+                        <a className="hover:text-[#ec5b13] transition-colors" href="#">LinkedIn</a>
+                        <a className="hover:text-[#ec5b13] transition-colors" href="#">Instagram</a>
+                    </div>
                 </div>
             </div>
         </footer>
-    </div>
-  )
-}
+    );
+};
 
 export default Footer
