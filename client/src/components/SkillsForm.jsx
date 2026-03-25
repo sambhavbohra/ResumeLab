@@ -1,4 +1,4 @@
-import { Plus, Trash2, X, LayoutGrid, Tag } from 'lucide-react'
+import { Plus, Trash2, X, LayoutGrid, Tag, Pencil } from 'lucide-react'
 import React, { useState } from 'react'
 
 const SkillsForm = ({ data = [], onChange }) => {
@@ -6,18 +6,31 @@ const SkillsForm = ({ data = [], onChange }) => {
     const [activeCategoryIndex, setActiveCategoryIndex] = useState(null)
     const [showCategoryModal, setShowCategoryModal] = useState(false)
     const [newCategoryName, setNewCategoryName] = useState("")
+    const [editingCategoryIndex, setEditingCategoryIndex] = useState(null)
 
     // Ensure data is an array
     const safeData = Array.isArray(data) ? data : []
 
     const handleAddCategory = () => {
         if (newCategoryName && newCategoryName.trim()) {
-            const updated = [...safeData, { category: newCategoryName.trim(), items: [] }]
+            const updated = [...safeData]
+            if (editingCategoryIndex !== null) {
+                updated[editingCategoryIndex].category = newCategoryName.trim()
+            } else {
+                updated.push({ category: newCategoryName.trim(), items: [] })
+            }
             onChange(updated)
-            setActiveCategoryIndex(updated.length - 1)
+            if (editingCategoryIndex === null) setActiveCategoryIndex(updated.length - 1)
             setNewCategoryName("")
+            setEditingCategoryIndex(null)
             setShowCategoryModal(false)
         }
+    }
+
+    const editCategory = (index) => {
+        setEditingCategoryIndex(index)
+        setNewCategoryName(safeData[index].category)
+        setShowCategoryModal(true)
     }
 
     const removeCategory = (index) => {
@@ -69,8 +82,8 @@ const SkillsForm = ({ data = [], onChange }) => {
                                     <LayoutGrid className="size-5 text-[var(--textdark)]" />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-bold text-gray-900">Add Category</h3>
-                                    <p className="text-xs text-gray-500">e.g. Frontend, Backend, Tools</p>
+                                    <h3 className="text-lg font-bold text-gray-900">{editingCategoryIndex !== null ? "Edit Category" : "Add Category"}</h3>
+                                    <p className="text-xs text-gray-500">{editingCategoryIndex !== null ? "Rename this skill group" : "e.g. Frontend, Backend, Tools"}</p>
                                 </div>
                             </div>
 
@@ -89,6 +102,7 @@ const SkillsForm = ({ data = [], onChange }) => {
                                     onClick={() => {
                                         setShowCategoryModal(false)
                                         setNewCategoryName("")
+                                        setEditingCategoryIndex(null)
                                     }}
                                     className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
                                 >
@@ -99,7 +113,7 @@ const SkillsForm = ({ data = [], onChange }) => {
                                     disabled={!newCategoryName.trim()}
                                     className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--textdark)] text-white font-semibold hover:opacity-90 shadow-lg transition-all active:scale-95 disabled:opacity-30"
                                 >
-                                    Add
+                                    {editingCategoryIndex !== null ? "Update" : "Add"}
                                 </button>
                             </div>
                         </div>
@@ -136,12 +150,22 @@ const SkillsForm = ({ data = [], onChange }) => {
                                     <LayoutGrid className="size-4" />
                                     <h4 className="font-bold text-sm uppercase tracking-wider">{category.category}</h4>
                                 </div>
-                                <button
-                                    onClick={() => removeCategory(catIndex)}
-                                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
-                                >
-                                    <Trash2 className="size-4" />
-                                </button>
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        onClick={() => editCategory(catIndex)}
+                                        className="p-1.5 rounded-lg text-gray-400 hover:text-[var(--textdark)] hover:bg-[var(--gradientend)]/20 transition-all"
+                                        title="Edit Category Name"
+                                    >
+                                        <Pencil className="size-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => removeCategory(catIndex)}
+                                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                                        title="Remove Category"
+                                    >
+                                        <Trash2 className="size-4" />
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="flex gap-2">

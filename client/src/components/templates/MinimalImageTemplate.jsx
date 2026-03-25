@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
+import { Mail, Phone, MapPin, ExternalLink, Github } from "lucide-react";
 
 const MinimalImageTemplate = ({ data, accentColor }) => {
     const formatDate = (dateStr) => {
@@ -65,6 +65,12 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                                 <div className="flex items-center gap-2">
                                     <MapPin size={14} style={{ color: accentColor }} />
                                     <span>{data.personal_info.location}</span>
+                                </div>
+                            )}
+                            {data.personal_info?.github && (
+                                <div className="flex items-center gap-2">
+                                    <Github size={14} style={{ color: accentColor }} />
+                                    <span>{data.personal_info.github.split("//")[1] || data.personal_info.github}</span>
                                 </div>
                             )}
                         </div>

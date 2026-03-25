@@ -1,4 +1,4 @@
-import { Mail, Phone, Linkedin, Globe, ExternalLink } from "lucide-react";
+import { Mail, Phone, Linkedin, Globe, ExternalLink, Github } from "lucide-react";
 
 const LatexTemplate = ({ data, accentColor }) => {
     const formatDate = (dateStr) => {
@@ -52,6 +52,15 @@ const LatexTemplate = ({ data, accentColor }) => {
                                 <div className="flex items-center gap-1.5">
                                     <Linkedin className="size-3" strokeWidth={2.5}/>
                                     <a href={data.personal_info.linkedin} target="_blank" rel="noreferrer" className="hover:underline">LinkedIn</a>
+                                </div>
+                                <span className="mx-0.5 text-[#D4D4D4]">|</span>
+                            </>
+                        )}
+                        {data.personal_info?.github && (
+                            <>
+                                <div className="flex items-center gap-1.5">
+                                    <Github className="size-3" strokeWidth={2.5}/>
+                                    <a href={data.personal_info.github} target="_blank" rel="noreferrer" className="hover:underline">GitHub</a>
                                 </div>
                                 <span className="mx-0.5 text-[#D4D4D4]">|</span>
                             </>

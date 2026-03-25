@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, Globe, Linkedin, Mail, MapPin, Phone, User, ImageIcon } from 'lucide-react'
+import { BriefcaseBusiness, Globe, Linkedin, Mail, MapPin, Phone, User, ImageIcon, Github } from 'lucide-react'
 import React from 'react'
 
 // Templates that require a photo
@@ -19,6 +19,7 @@ const PersonalInfoForm = ({data, onChange, removeBackground, setRemoveBackground
         { key: "location", label: "Location", icon: MapPin, type: "text", autoComplete: "address-level2" },
         { key: "profession", label: "Profession", icon: BriefcaseBusiness, type: "text", autoComplete: "organization-title" },
         { key: "linkedin", label: "LinkedIn Profile", icon: Linkedin, type: "url", autoComplete: "url" },
+        { key: "github", label: "GitHub Profile", icon: Github, type: "url", autoComplete: "url" },
         { key: "website", label: "Personal Website", icon: Globe, type: "url", autoComplete: "url" }
     ]
 

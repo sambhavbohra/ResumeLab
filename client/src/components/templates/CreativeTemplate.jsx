@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Linkedin, Globe, User, Briefcase, Rocket, GraduationCap, Zap, ExternalLink } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Globe, User, Briefcase, Rocket, GraduationCap, Zap, ExternalLink, Github } from "lucide-react";
 
 const CreativeTemplate = ({ data, accentColor }) => {
     const formatDate = (dateStr) => {
@@ -44,6 +44,12 @@ const CreativeTemplate = ({ data, accentColor }) => {
                             <a target="_blank" href={data.personal_info.linkedin} className="flex items-center gap-1 hover:text-gray-900 transition-colors">
                                 <Linkedin className="size-3" />
                                 <span className="break-all">LinkedIn</span>
+                            </a>
+                        )}
+                        {data.personal_info?.github && (
+                            <a target="_blank" href={data.personal_info.github} className="flex items-center gap-1 hover:text-gray-900 transition-colors">
+                                <Github className="size-3" />
+                                <span className="break-all">GitHub</span>
                             </a>
                         )}
                         {data.personal_info?.website && (
