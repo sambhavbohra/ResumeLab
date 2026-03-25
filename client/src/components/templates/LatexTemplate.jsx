@@ -14,9 +14,9 @@ const LatexTemplate = ({ data, accentColor }) => {
         <div className="max-w-4xl mx-auto p-10 bg-white text-[11pt] text-[#141414] font-sans leading-tight">
             <style>
                 {`
-                @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&family=Inter:wght@400;700&display=swap');
-                .latex-mono { font-family: 'Fira+Mono', monospace; }
-                .latex-sans { font-family: 'Inter', sans-serif; }
+                @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;700&display=swap');
+                .latex-mono { font-family: 'IBM Plex Mono', monospace; }
+                .latex-sans { font-family: 'IBM Plex Sans', sans-serif; }
                 .latex-section-title { font-size: 1.15rem; font-weight: 700; color: #141414; }
                 .latex-hr { border-top: 2px solid #D4D4D4; margin-bottom: 6px; }
                 `}
