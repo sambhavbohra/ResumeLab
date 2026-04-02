@@ -178,3 +178,65 @@ export const uploadResume = async (req, res) => {
         return res.status(400).json({message: error.message})
     }
 }
+
+// controller for analyzing resume compatibility with a job description
+// POST: /api/ai/analyze-ats
+export const analyzeResumeATS = async (req, res) => {
+    try {
+        const { resumeData, jobDescription } = req.body;
+
+        if (!resumeData || !jobDescription) {
+            return res.status(400).json({ message: 'Missing resume data or job description' });
+        }
+
+        const systemPrompt = `You are an expert ATS (Applicant Tracking System) optimizer and HR Specialist. 
+Your task is to analyze a resume's compatibility with a specific job description.
+
+Provide a comprehensive analysis including:
+1. An overall match score (0-100).
+2. Key Skills Match: identified skills from the job description found vs missing.
+3. Keyword Optimization: relevant industry keywords to add.
+4. Content Feedback: how well the experience and summary align with the job requirements.
+5. Actionable Suggestions: precise improvements to increase the score.
+
+Return the response ONLY as a structured JSON object.`;
+
+        const userPrompt = `
+RESUME DATA:
+${JSON.stringify(resumeData, null, 2)}
+
+JOB DESCRIPTION:
+${jobDescription}
+
+Return JSON in this format:
+{
+    "score": number,
+    "matchAnalysis": "summary of how the resume matches",
+    "skills": {
+        "found": ["skill1", "skill2"],
+        "missing": ["skill3", "skill4"]
+    },
+    "keywords": ["keyword1", "keyword2"],
+    "suggestions": [
+        { "title": "Improve Summary", "description": "Add focus on..." },
+        { "title": "Add Keywords", "description": "Include..." }
+    ],
+    "formattingTips": ["tip1", "tip2"]
+}`;
+
+        const response = await ai.chat.completions.create({
+            model: process.env.OPENAI_MODEL,
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt },
+            ],
+            response_format: { type: 'json_object' }
+        });
+
+        const analysis = JSON.parse(response.choices[0].message.content);
+        return res.status(200).json(analysis);
+
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+}

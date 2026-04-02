@@ -167,10 +167,8 @@ const Register = () => {
 
             {/* Navigation */}
             <header className="relative z-10 w-full px-6 py-6 lg:px-20 flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                    <div className="text-[#ec5b13]">
-                        <FileText size={40} strokeWidth={1.5} />
-                    </div>
+                <div className="flex items-center gap-3">
+                    <img src="/favicon.svg" alt="ResumeLab Logo" className="h-10 w-10" />
                     <Link to="/" className="text-2xl font-black tracking-tight text-slate-900">
                         Resume<span className="text-[#ec5b13]">Lab</span>
                     </Link>
